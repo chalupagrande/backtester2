@@ -28,7 +28,7 @@ export class Order {
     this.quantity = quantity;
     this.side = side;
     this.type = type;
-    this.status = ORDER_STATUS.NEW;
+    this.status = ORDER_STATUS.new;
     this.limitPrice = limitPrice;
     this.stopPrice = stopPrice;
     this.filledQuantity = 0;

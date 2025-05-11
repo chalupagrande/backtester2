@@ -7,21 +7,27 @@ export const EVENT_TYPES = {
 } as const
 
 export const ORDER_SIDE = {
-  BUY: 'buy',
-  SELL: 'sell'
+  buy: 'buy',
+  sell: 'sell'
 } as const
 
 export const ORDER_TYPE = {
-  MARKET: 'market',
-  LIMIT: 'limit',
-  STOP: 'stop',
-  STOP_LIMIT: 'stop_limit'
+  market: 'market',
+  limit: 'limit',
+  stop: 'stop',
+  stop_limit: 'stop_limit'
 } as const
 
 export const ORDER_STATUS = {
-  NEW: 'new',
-  FILLED: 'filled',
-  PARTIALLY_FILLED: 'partially_filled',
-  CANCELED: 'canceled',
-  REJECTED: 'rejected'
+  new: 'new',
+  filled: 'filled',
+  partially_filled: 'partially_filled',
+  canceled: 'canceled',
+  rejected: 'rejected'
 } as const
+
+export const RUNNER_MODE = {
+  backtest: 'backtest',
+  paper: 'paper',
+  live: 'live'
+}
