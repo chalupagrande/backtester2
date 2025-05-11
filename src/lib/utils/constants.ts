@@ -1,6 +1,9 @@
 export const EVENT_TYPES = {
   tick: 'tick',
   signal: 'signal',
+  orderRequested: 'order_requested',
+  orderPlaced: 'order_placed',
+  orderFilled: 'order_filled',
 } as const
 
 export const ORDER_SIDE = {

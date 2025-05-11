@@ -1,4 +1,4 @@
-import { FetchClient } from "./utils/fetchClient";
+import { FetchClient } from "../utils/fetchClient";
 
 const dataClient = new FetchClient('https://data.alpaca.markets/v2');
 

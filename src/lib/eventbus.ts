@@ -10,10 +10,8 @@ interface Subscription<T = any> {
 }
 
 
-
 export class EventBus {
   private subscribers: Map<string, Subscription<any>[]>;
-
 
   constructor() {
     this.subscribers = new Map();
