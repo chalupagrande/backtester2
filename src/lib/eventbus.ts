@@ -1,5 +1,5 @@
-import { EventType } from './types';
-
+import { EventType } from './utils/types';
+import { Event } from './Event';
 
 type EventHandler<T = any> = (payload: T, event: Event<T>) => void | Promise<void>;
 type EventFilter<T = any> = (payload: T, event: Event<T>) => boolean;
@@ -9,17 +9,7 @@ interface Subscription<T = any> {
   filter?: EventFilter<T>;
 }
 
-export class Event<T> {
-  type: EventType;
-  timestamp: Date;
-  data: T;
 
-  constructor(type: EventType, data: T, timestamp?: Date) {
-    this.type = type;
-    this.timestamp = timestamp || new Date();
-    this.data = data;
-  }
-}
 
 export class EventBus {
   private subscribers: Map<string, Subscription<any>[]>;
