@@ -16,38 +16,24 @@ export type OrderStatus = keyof typeof ORDER_STATUS;
 export type Direction = keyof typeof DIRECTION;
 export type TimeInForce = keyof typeof TIME_IN_FORCE;
 
-export type GetOrderOptions = {
-  status?: OrderStatus;
-  limit?: number;
-  after?: Date;
-  until?: Date;
-  side?: OrderSide;
-  direction?: Direction
-}
-
-export type OrderOptions = {
-  symbol: string,
-  quantity: number,
-  side: OrderSide,
-  type: OrderType,
-  limitPrice?: number,
-  stopPrice?: number,
-  trailPrice?: number,
-  trailPercent?: number,
-  timeInForce?: TimeInForce,
-}
 
 export type ExecutionProvider = {
   placeOrder: (order: Order) => Promise<void>;
   cancelOrder: (orderId: string) => Promise<void>;
   getOrder: (orderId: string) => Promise<Order | null>;
-  getOrders: (options: GetOrderOptions) => Promise<Order[]>;
+  getOrders: (options: any) => Promise<Order[]>;
   getPositions: () => Promise<Position[]>;
   closeAPosition: (symbol: string) => Promise<void>;
 }
 
-export type Strategy = {
-  name: string
-  description: string
-  execute: (symbol: string, quantity: number) => Promise<void>;
+
+export type Bar = {
+  c: number;
+  h: number;
+  l: number;
+  n: number;
+  o: number;
+  t: string;
+  v: number;
+  vw: number
 }

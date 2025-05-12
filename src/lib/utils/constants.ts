@@ -4,6 +4,7 @@ export const EVENT_TYPES = {
   order_placed: 'order_placed',
   order_filled: 'order_filled',
   order_canceled: 'order_canceled',
+  context_updated: 'context_updated',
 } as const
 
 export const ORDER_SIDE = {

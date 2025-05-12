@@ -1,16 +1,31 @@
 import { Event } from '../Event';
 import { Order } from '../Order';
-import { Portfolio } from '../Portfolio';
-import { getBarsLatest } from '../providers/alpacaDataProvider';
+import type { Portfolio } from '../Portfolio';
 import { Strategy } from '../Strategy';
+import type { ExecutionProvider, Bar } from '../utils/types';
+import type { Context as TContext } from '../Context';
+import { Context } from '../Context';
+import { EventBus } from '../EventBus';
+import { EVENT_TYPES } from '../utils/constants';
 
-
-export class DemoStrategy extends Strategy {
+export class DemoStrategy<T> extends Strategy {
+  private executionProvider: ExecutionProvider;
   private portfolio: Portfolio;
+  private eventBus: EventBus;
+  private ctx: Context<T>;
 
-  constructor(portfolio: Portfolio) {
+  constructor({ defaultContext, executionProvider, portfolio, eventBus }: {
+    defaultContext: T;
+    eventBus: EventBus;
+    executionProvider: ExecutionProvider;
+    portfolio: Portfolio;
+  }) {
     super('Demo Strategy', 'A demo strategy that fetches the latest bars from Alpaca.');
-    this.portfolio = portfolio
+
+    this.ctx = new Context<T>(defaultContext, eventBus);
+    this.eventBus = eventBus;
+    this.executionProvider = executionProvider;
+    this.portfolio = portfolio;
 
     this.handleOrderFilled = this.handleOrderFilled.bind(this);
     this.handleTick = this.handleTick.bind(this);
@@ -18,21 +33,17 @@ export class DemoStrategy extends Strategy {
 
   public async handleTick(event: Event<any>): Promise<void> {
     console.log('Executing Demo Strategy...', event);
-    const symbols = 'AAPL,MSFT,GOOGL';
-    const data = await getBarsLatest(symbols);
-    console.log('Latest bars data:', data);
-    const order = new Order({
-      symbol: 'AAPL',
-      quantity: 1,
-      side: 'buy',
-      type: 'market',
-      timeInForce: 'gtc',
-    })
-    await this.portfolio.placeOrder(order);
   }
 
   public async handleOrderFilled(order: Order): Promise<void> {
     console.log('Handling order:', order);
-    this.portfolio.closeAPosition("AAPL")
+  }
+
+  async updateCtx(ctx: Partial<T>) {
+    this.ctx.update(ctx);
+  }
+
+  async getCtx() {
+    return await this.ctx.get()
   }
 }

@@ -14,13 +14,14 @@ if (!process.env.ALPACA_API_KEY_ID || !process.env.ALPACA_API_SECRET) {
   throw new Error('Missing Alpaca API credentials');
 }
 
+
+const defaultContext = { last14Bars: [] }
 const eventBus = new EventBus();
 const executionProvider = new AlpacaExecutionProvider()
 const portfolio = new Portfolio(10000, executionProvider, eventBus)
-const strategy = new DemoStrategy(portfolio);
+const strategy = new DemoStrategy<typeof defaultContext>({ defaultContext, executionProvider, portfolio, eventBus });
 
 eventBus.subscribe(EVENT_TYPES.tick, strategy.handleTick)
-eventBus.subscribe(EVENT_TYPES.order_filled, portfolio.handleOrderFilled)
 eventBus.subscribe(EVENT_TYPES.order_filled, strategy.handleOrderFilled)
 
 const curOrder = new Order({

@@ -1,8 +1,18 @@
 import type { Order } from "../Order";
 import { FetchClient } from "../utils/fetchClient";
-import { GetOrderOptions } from "../utils/types";
+import { Direction, OrderSide, OrderStatus } from "../utils/types";
 
 const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
+
+
+type GetOrderOptions = {
+  status?: OrderStatus;
+  limit?: number;
+  after?: Date;
+  until?: Date;
+  side?: OrderSide;
+  direction?: Direction
+}
 
 export class AlpacaExecutionProvider {
   private client: FetchClient;
