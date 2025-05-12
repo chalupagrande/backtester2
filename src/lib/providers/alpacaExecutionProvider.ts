@@ -74,4 +74,27 @@ export class AlpacaExecutionProvider {
       console.log(err);
     }
   }
+
+  async getPositions() {
+    try {
+      const response = await this.client.request("/positions", {
+        method: 'GET',
+      });
+
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async closeAPosition(symbol: string, quantity?: number) {
+    try {
+      const response = await this.client.request(`/positions/${symbol}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }

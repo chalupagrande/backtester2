@@ -29,4 +29,8 @@ export class BacktestExecutionProvider implements ExecutionProvider {
     return []
   }
 
+  async closeAPosition(symbol: string) {
+    console.log("closing position")
+  }
+
 }

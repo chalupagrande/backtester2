@@ -34,7 +34,7 @@ export const TIME_IN_FORCE = {
   cls: 'cls',
   ioc: 'ioc',
   fok: 'fok',
-}
+} as const
 
 export const DIRECTION = {
   asc: 'asc',

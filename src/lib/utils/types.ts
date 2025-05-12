@@ -42,6 +42,8 @@ export type ExecutionProvider = {
   cancelOrder: (orderId: string) => Promise<void>;
   getOrder: (orderId: string) => Promise<Order | null>;
   getOrders: (options: GetOrderOptions) => Promise<Order[]>;
+  getPositions: () => Promise<Position[]>;
+  closeAPosition: (symbol: string) => Promise<void>;
 }
 
 export type Strategy = {

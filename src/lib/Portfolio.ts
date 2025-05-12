@@ -9,8 +9,8 @@ export class Portfolio {
   public buyingPower: number = 0;
   public cash: number = 0;
   public equity: number = 0;
-  public orders: Order[] = [];
-  public positions: Map<string, Position> = new Map();
+  private orders: Order[] = [];
+  private positions: Map<string, Position> = new Map();
   private executionProvider: ExecutionProvider;
   private eventBus: EventBus;
 
@@ -19,6 +19,12 @@ export class Portfolio {
     this.cash = investment;
     this.executionProvider = executionProvider
     this.eventBus = eventBus;
+
+    this.placeOrder = this.placeOrder.bind(this);
+    this.cancelOrder = this.cancelOrder.bind(this);
+    this.getOrder = this.getOrder.bind(this);
+    this.getOrders = this.getOrders.bind(this);
+    this.handleOrderFilled = this.handleOrderFilled.bind(this);
   }
 
   public async placeOrder(order: Order): Promise<void> {
@@ -41,7 +47,13 @@ export class Portfolio {
 
   public async handleOrderFilled(event: Event<Order>): Promise<void> {
     console.log("Order filled:", event.data);
-    const order = event.data;
+    const positions = await this.executionProvider.getPositions()
+
+    console.log("Positions:", positions);
+  }
+
+  public async closeAPosition(symbol: string): Promise<void> {
+    this.executionProvider.closeAPosition(symbol)
   }
 
 }

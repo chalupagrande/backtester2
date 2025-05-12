@@ -7,7 +7,7 @@ export class Event<T> {
 
   constructor(type: EventType, data: T, timestamp?: Date) {
     this.type = type;
-    this.timestamp = timestamp || new Date();
     this.data = data;
+    this.timestamp = timestamp || new Date();
   }
 }

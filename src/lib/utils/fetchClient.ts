@@ -36,7 +36,6 @@ export class FetchClient {
 
     // Remove params from options to avoid sending them in the body
     const { params, ...fetchOptions } = options;
-    console.log(url);
     return fetch(url.href, {
       ...fetchOptions,
       headers: { ...defaultHeaders, ...options.headers }

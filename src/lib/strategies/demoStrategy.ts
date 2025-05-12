@@ -11,6 +11,9 @@ export class DemoStrategy extends Strategy {
   constructor(portfolio: Portfolio) {
     super('Demo Strategy', 'A demo strategy that fetches the latest bars from Alpaca.');
     this.portfolio = portfolio
+
+    this.handleOrderFilled = this.handleOrderFilled.bind(this);
+    this.handleTick = this.handleTick.bind(this);
   }
 
   public async handleTick(event: Event<any>): Promise<void> {
@@ -25,12 +28,11 @@ export class DemoStrategy extends Strategy {
       type: 'market',
       timeInForce: 'gtc',
     })
-    console.log("Portfolio", this.portfolio)
     await this.portfolio.placeOrder(order);
   }
 
-  public async handleOrder(order: Order): Promise<void> {
+  public async handleOrderFilled(order: Order): Promise<void> {
     console.log('Handling order:', order);
-    // Implement your order handling logic here
+    this.portfolio.closeAPosition("AAPL")
   }
 }
