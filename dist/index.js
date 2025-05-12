@@ -11,12 +11,15 @@ const EventBus_1 = require("./lib/EventBus");
 const demoStrategy_1 = require("./lib/strategies/demoStrategy");
 const Portfolio_1 = require("./lib/Portfolio");
 const alpacaExecutionProvider_1 = require("./lib/providers/alpacaExecutionProvider");
+const constants_1 = require("./lib/utils/constants");
+const Order_1 = require("./lib/Order");
 const eventBus = new EventBus_1.EventBus();
 const executionProvider = new alpacaExecutionProvider_1.AlpacaExecutionProvider();
 const portfolio = new Portfolio_1.Portfolio(10000, executionProvider, eventBus);
-eventBus.subscribe('tick', demoStrategy_1.DemoStrategy);
-eventBus.publish('tick', { tick: 1 });
+const strategy = new demoStrategy_1.DemoStrategy(portfolio);
+eventBus.subscribe('tick', strategy.handleTick);
 eventBus.subscribe('orderFilled', portfolio.handleOrderFilled);
+eventBus.subscribe('orderFilled', strategy.handleOrder);
 if (!process.env.ALPACA_API_KEY_ID || !process.env.ALPACA_API_SECRET) {
     throw new Error('Missing Alpaca API credentials');
 }
@@ -28,25 +31,57 @@ ws.on('open', () => {
         key: process.env.ALPACA_API_KEY_ID,
         secret: process.env.ALPACA_API_SECRET
     }));
-    setTimeout(() => ws.send(JSON.stringify({
-        action: 'listen',
-        data: {
-            streams: ['trade_updates']
-        }
-    })), 2000);
 });
-ws.on('message', (data) => {
-    console.log("MESSAGE DATA", data);
-    console.log("JSON", JSON.parse(data.toString()));
-    // const message = JSON.parse(data.toString());
-    // if (message.stream === 'trade_updates') {
-    //   const order = message.data;
-    //   console.log('Order update:', order);
-    //   eventBus.publish('orderFilled', order);
-    // } else if (message.stream === 'account_updates') {
-    //   const account = message.data;
-    //   console.log('Account update:', account);
-    // }
+ws.on('message', (buffer) => {
+    const messageData = JSON.parse(buffer.toString());
+    switch (messageData.stream) {
+        case 'authorization': {
+            if (messageData.data.status === 'authorized') {
+                console.log('WebSocket connection authorized');
+                ws.send(JSON.stringify({
+                    action: 'listen',
+                    data: {
+                        streams: ['trade_updates']
+                    }
+                }));
+            }
+            else {
+                console.error('WebSocket connection not authorized');
+            }
+            break;
+        }
+        case 'listening': {
+            console.log('Listening to streams:', messageData.data.streams);
+            if (messageData.data.streams.includes('trade_updates')) {
+                eventBus.publish(constants_1.EVENT_TYPES.tick, {});
+            }
+            break;
+        }
+        case 'trade_updates': {
+            console.log('Trade updates:', messageData.data);
+            const data = messageData.data;
+            const order = data.order;
+            if (order) {
+                const curOrder = new Order_1.Order({
+                    symbol: order?.symbol,
+                    quantity: data?.qty,
+                    side: order?.side,
+                    type: order?.type,
+                    timeInForce: order?.time_in_force,
+                    limitPrice: order?.limit_price,
+                    stopPrice: order?.stop_price,
+                    trailPrice: order?.trail_price,
+                    trailPercent: order?.trail_percent
+                });
+                eventBus.publish(constants_1.EVENT_TYPES.order_filled, curOrder);
+            }
+            break;
+        }
+        default: {
+            console.log('Unknown stream:', messageData.stream);
+            break;
+        }
+    }
 });
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing...');

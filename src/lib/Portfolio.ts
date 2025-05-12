@@ -2,7 +2,7 @@ import { EventBus } from './EventBus';
 import type { Order } from './Order';
 import { Position } from './Position';
 import type { Event } from './Event';
-import { EVENT_TYPES, ORDER_SIDE, ORDER_TYPE } from './utils/constants';
+import { EVENT_TYPES } from './utils/constants';
 import type { ExecutionProvider, GetOrderOptions } from './utils/types';
 
 export class Portfolio {
@@ -20,48 +20,6 @@ export class Portfolio {
     this.executionProvider = executionProvider
     this.eventBus = eventBus;
   }
-
-  // private updatePortfolio(order: Order): void {
-  //   const position = this.positions.get(order.symbol);
-  //   const isBuyOrder = order.side === ORDER_SIDE.buy;
-  //   const orderQuantity = isBuyOrder ? order.quantity : -order.quantity;
-
-  //   if (position) {
-  //     const newQuantity = position.quantity + orderQuantity;
-
-  //     if (newQuantity === 0) {
-  //       // Position is closed, remove it from positions
-  //       this.positions.delete(order.symbol);
-  //     } else {
-  //       // Update existing position
-  //       if (isBuyOrder) {
-  //         // For buy orders, update average entry price
-  //         position.averageEntryPrice = (
-  //           (position.averageEntryPrice * position.quantity) +
-  //           (order.filledPrice * order.quantity)
-  //         ) / (position.quantity + order.quantity);
-  //       }
-  //       position.quantity = newQuantity;
-  //       position.currentPrice = order.filledPrice;
-  //       position.lastUpdated = new Date();
-  //     }
-  //   } else {
-  //     // Only create new position for buy orders
-  //     if (isBuyOrder) {
-  //       this.positions.set(
-  //         order.symbol,
-  //         new Position(
-  //           order.symbol,
-  //           order.quantity,
-  //           order.filledPrice,
-  //           order.filledPrice
-  //         )
-  //       );
-  //     }
-  //   }
-
-  //   this.orders.push(order);
-  // }
 
   public async placeOrder(order: Order): Promise<void> {
     this.executionProvider.placeOrder(order)

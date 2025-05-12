@@ -1,4 +1,4 @@
-import type { OrderSide, OrderType, OrderStatus } from './utils/types';
+import type { OrderSide, OrderType, OrderStatus, OrderOptions } from './utils/types';
 import { ORDER_STATUS, TIME_IN_FORCE } from './utils/constants';
 
 export class Order {
@@ -19,29 +19,20 @@ export class Order {
   public trailPercent?: number;
   public notes: string;
 
-  constructor(
-    symbol: string,
-    quantity: number,
-    side: OrderSide,
-    type: OrderType,
-    limitPrice?: number,
-    stopPrice?: number,
-    trailPrice?: number,
-    trailPercent?: number
-  ) {
+  constructor(options: OrderOptions) {
     this.id = Math.random().toString(36).substring(7);
-    this.symbol = symbol;
-    this.quantity = quantity;
-    this.side = side;
-    this.type = type;
+    this.symbol = options.symbol;
+    this.quantity = options.quantity;
+    this.side = options.side;
+    this.type = options.type;
     this.status = ORDER_STATUS.new;
     this.timeInForce = TIME_IN_FORCE.day;
-    this.limitPrice = limitPrice;
-    this.stopPrice = stopPrice;
+    this.limitPrice = options.limitPrice;
+    this.stopPrice = options.stopPrice;
     this.filledQuantity = 0;
     this.averageFilledPrice = 0;
-    this.trailPrice = trailPrice;
-    this.trailPercent = trailPercent;
+    this.trailPrice = options.trailPrice;
+    this.trailPercent = options.trailPercent;
 
     this.notes = ""
     this.createdAt = new Date();

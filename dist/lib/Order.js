@@ -19,20 +19,20 @@ class Order {
     trailPrice;
     trailPercent;
     notes;
-    constructor(symbol, quantity, side, type, limitPrice, stopPrice, trailPrice, trailPercent) {
+    constructor(options) {
         this.id = Math.random().toString(36).substring(7);
-        this.symbol = symbol;
-        this.quantity = quantity;
-        this.side = side;
-        this.type = type;
+        this.symbol = options.symbol;
+        this.quantity = options.quantity;
+        this.side = options.side;
+        this.type = options.type;
         this.status = constants_1.ORDER_STATUS.new;
         this.timeInForce = constants_1.TIME_IN_FORCE.day;
-        this.limitPrice = limitPrice;
-        this.stopPrice = stopPrice;
+        this.limitPrice = options.limitPrice;
+        this.stopPrice = options.stopPrice;
         this.filledQuantity = 0;
         this.averageFilledPrice = 0;
-        this.trailPrice = trailPrice;
-        this.trailPercent = trailPercent;
+        this.trailPrice = options.trailPrice;
+        this.trailPercent = options.trailPercent;
         this.notes = "";
         this.createdAt = new Date();
         this.updatedAt = new Date();
