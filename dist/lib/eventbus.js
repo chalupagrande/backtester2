@@ -1,17 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventBus = exports.Event = void 0;
-class Event {
-    type;
-    timestamp;
-    data;
-    constructor(type, data, timestamp) {
-        this.type = type;
-        this.timestamp = timestamp || new Date();
-        this.data = data;
-    }
-}
-exports.Event = Event;
+exports.EventBus = void 0;
+const Event_1 = require("./Event");
 class EventBus {
     subscribers;
     constructor() {
@@ -22,7 +12,7 @@ class EventBus {
      * @param event The event object to publish.
      */
     publish(eventType, data) {
-        const event = new Event(eventType, data);
+        const event = new Event_1.Event(eventType, data);
         const eventTypeSubscribers = this.subscribers.get(eventType);
         if (eventTypeSubscribers) {
             eventTypeSubscribers.forEach(async (subscription) => {

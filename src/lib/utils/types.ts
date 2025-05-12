@@ -3,7 +3,7 @@ import {
   ORDER_SIDE,
   ORDER_TYPE,
   ORDER_STATUS,
-  RUNNER_MODE
+  DIRECTION
 } from './constants';
 import type { Order } from '../Order';
 import type { Position } from '../Position';
@@ -12,12 +12,20 @@ export type EventType = keyof typeof EVENT_TYPES;
 export type OrderType = keyof typeof ORDER_TYPE;
 export type OrderSide = keyof typeof ORDER_SIDE;
 export type OrderStatus = keyof typeof ORDER_STATUS;
-export type RunnerMode = keyof typeof RUNNER_MODE
+export type Direction = keyof typeof DIRECTION;
+
+export type GetOrderOptions = {
+  status?: OrderStatus;
+  limit?: number;
+  after?: Date;
+  until?: Date;
+  side?: OrderSide;
+  direction?: Direction
+}
 
 export type ExecutionProvider = {
   placeOrder: (order: Order) => Promise<void>;
   cancelOrder: (orderId: string) => Promise<void>;
   getOrder: (orderId: string) => Promise<Order | null>;
-  getOrders: () => Promise<Order[]>;
-  getPositions: () => Promise<Position[]>;
+  getOrders: (options: GetOrderOptions) => Promise<Order[]>;
 }

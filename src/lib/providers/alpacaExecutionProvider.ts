@@ -1,5 +1,6 @@
 import type { Order } from "../Order";
 import { FetchClient } from "../utils/fetchClient";
+import { GetOrderOptions } from "../utils/types";
 
 const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
 
@@ -11,27 +12,66 @@ export class AlpacaExecutionProvider {
   }
 
   async placeOrder(order: Order) {
-    console.log('place order')
+    try {
+      const response = await this.client.request("/orders", {
+        method: 'POST',
+        body: JSON.stringify({
+          symbol: order.symbol,
+          side: order.side,
+          qty: order.quantity,
+          type: order.type,
+          time_in_force: order.timeInForce,
+          limit_price: order.limitPrice,
+          stop_price: order.stopPrice,
+          trail_price: order.trailPrice,
+          trail_percent: order.trailPercent,
+        }),
+      });
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async cancelOrder(orderId: string) {
-    console.log("canceling order")
+    try {
+      const response = await this.client.request(`/orders/${orderId}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async getOrder(orderId: string) {
-    console.log('get order')
-
-    return null
+    try {
+      const response = await this.client.request(`/orders/${orderId}`, {
+        method: 'GET',
+      });
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  async getOrders() {
-    console.log('getting orders')
-    return []
-  }
 
-  async getPositions() {
-    console.log("getting positions")
-    return []
-  }
+  async getOrders(options: GetOrderOptions) {
+    try {
+      let params: Record<string, any> = {}
+      for (const key in options) {
+        if (options[key as keyof GetOrderOptions] !== undefined) {
+          params[key] = options[key as keyof GetOrderOptions];
+        }
+      }
+      const response = await this.client.request("/orders", {
+        method: 'GET',
+        params: params
+      });
 
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }

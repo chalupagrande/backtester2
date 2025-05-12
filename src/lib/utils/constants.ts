@@ -1,9 +1,9 @@
 export const EVENT_TYPES = {
   tick: 'tick',
   signal: 'signal',
-  orderRequested: 'order_requested',
-  orderPlaced: 'order_placed',
-  orderFilled: 'order_filled',
+  order_placed: 'order_placed',
+  order_filled: 'order_filled',
+  order_canceled: 'order_canceled',
 } as const
 
 export const ORDER_SIDE = {
@@ -15,7 +15,8 @@ export const ORDER_TYPE = {
   market: 'market',
   limit: 'limit',
   stop: 'stop',
-  stop_limit: 'stop_limit'
+  stop_limit: 'stop_limit',
+  trailing_stop: 'trailing_stop',
 } as const
 
 export const ORDER_STATUS = {
@@ -26,8 +27,16 @@ export const ORDER_STATUS = {
   rejected: 'rejected'
 } as const
 
-export const RUNNER_MODE = {
-  backtest: 'backtest',
-  paper: 'paper',
-  live: 'live'
+export const TIME_IN_FORCE = {
+  day: 'day',
+  gtc: 'gtc',
+  opg: 'opg',
+  cls: 'cls',
+  ioc: 'ioc',
+  fok: 'fok',
+}
+
+export const DIRECTION = {
+  asc: 'asc',
+  desc: 'desc',
 }
