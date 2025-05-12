@@ -3,7 +3,7 @@ import {
   ORDER_SIDE,
   ORDER_TYPE,
   ORDER_STATUS,
-  DIRECTION,
+  SORT_DIRECTION,
   TIME_IN_FORCE
 } from './constants';
 import type { Order } from '../Order';
@@ -13,7 +13,7 @@ export type EventType = keyof typeof EVENT_TYPES;
 export type OrderType = keyof typeof ORDER_TYPE;
 export type OrderSide = keyof typeof ORDER_SIDE;
 export type OrderStatus = keyof typeof ORDER_STATUS;
-export type Direction = keyof typeof DIRECTION;
+export type SortDirection = keyof typeof SORT_DIRECTION;
 export type TimeInForce = keyof typeof TIME_IN_FORCE;
 
 

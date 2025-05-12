@@ -1,26 +1,25 @@
 import { Event } from '../Event';
 import { Order } from '../Order';
-import type { Portfolio } from '../Portfolio';
 import { Strategy } from '../Strategy';
-import type { ExecutionProvider } from '../utils/types';
 import { Context } from '../Context';
 import { EventBus } from '../EventBus';
+import type { ExecutionProvider, PortfolioProvider } from '../utils/types';
 
 export class DemoStrategy<T> extends Strategy {
   private executionProvider: ExecutionProvider;
-  private portfolio: Portfolio;
+  private portfolio: PortfolioProvider;
   private eventBus: EventBus;
   private ctx: Context<T>;
 
-  constructor({ defaultContext, executionProvider, portfolio, eventBus }: {
-    defaultContext: T;
+  constructor({ initialContext, executionProvider, portfolio, eventBus }: {
+    initialContext: T;
     eventBus: EventBus;
     executionProvider: ExecutionProvider;
-    portfolio: Portfolio;
+    portfolio: PortfolioProvider;
   }) {
     super('Demo Strategy', 'A demo strategy that fetches the latest bars from Alpaca.');
 
-    this.ctx = new Context<T>(defaultContext, eventBus);
+    this.ctx = new Context<T>(initialContext, eventBus);
     this.eventBus = eventBus;
     this.executionProvider = executionProvider;
     this.portfolio = portfolio;

@@ -4,8 +4,8 @@ dotenv.config();
 import WebSocket from 'ws'
 import { EventBus } from './lib/EventBus';
 import { DemoStrategy } from './lib/strategies/demoStrategy';
-import { Portfolio } from './lib/Portfolio';
 import { AlpacaExecutionProvider } from './lib/providers/alpacaExecutionProvider';
+import { AlpacaPortfolioProvider } from './lib/providers/alpacaPortfolioProvider';
 import { EVENT_TYPES } from './lib/utils/constants';
 import type { Bar } from './lib/utils/types';
 import { Order } from './lib/Order';
@@ -17,14 +17,14 @@ if (!process.env.ALPACA_API_KEY_ID || !process.env.ALPACA_API_SECRET) {
 type InitialContextType = {
   last14Bars: Bar[];
 }
-const defaultContext: InitialContextType = { last14Bars: [] }
+const initialContext: InitialContextType = { last14Bars: [] }
 const eventBus = new EventBus();
 const executionProvider = new AlpacaExecutionProvider()
-const portfolio = new Portfolio(10000, executionProvider, eventBus)
-const strategy = new DemoStrategy<InitialContextType>({ defaultContext, executionProvider, portfolio, eventBus });
+const portfolio = new AlpacaPortfolioProvider()
+const strategy = new DemoStrategy<InitialContextType>({ initialContext, executionProvider, portfolio, eventBus });
 
-eventBus.subscribe(EVENT_TYPES.tick, strategy.handleTick)
-eventBus.subscribe(EVENT_TYPES.order_filled, strategy.handleOrderFilled)
+eventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick)
+eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, strategy.handleOrderFilled)
 
 
 //  __      _____ ___   ___  ___   ___ _  _____ _____ 
@@ -46,29 +46,7 @@ ws.on('open', () => {
 ws.on('message', (buffer: Buffer) => {
   const messageData = JSON.parse(buffer.toString());
   switch (messageData.stream) {
-    case 'authorization': {
-      if (messageData.data.status === 'authorized') {
-        // once authorized, listen to the trade_updates stream
-        console.log('WebSocket connection authorized');
-        ws.send(JSON.stringify({
-          action: 'listen',
-          data: {
-            streams: ['trade_updates']
-          }
-        }));
-      } else {
-        console.error('WebSocket connection not authorized');
-      }
-      break;
-    }
-    case 'listening': {
-      console.log('Listening to streams:', messageData.data.streams);
-      if (messageData.data.streams.includes('trade_updates')) {
-        // eventBus.emit(EVENT_TYPES.tick, e);
-      }
-      break;
-    }
-
+    // TRADE UPDATES
     case 'trade_updates': {
       console.log('Trade updates:', messageData.data)
       const data = messageData.data;
@@ -85,7 +63,33 @@ ws.on('message', (buffer: Buffer) => {
           trailPrice: order?.trail_price,
           trailPercent: order?.trail_percent
         })
-        eventBus.emit(EVENT_TYPES.order_filled, curOrder);
+        eventBus.emit(EVENT_TYPES.ORDER_FILLED, curOrder);
+      }
+      break;
+    }
+
+    //AUTHORIZATION
+    case 'authorization': {
+      if (messageData.data.status === 'authorized') {
+        // once authorized, listen to the trade_updates stream
+        console.log('WebSocket connection authorized');
+        ws.send(JSON.stringify({
+          action: 'listen',
+          data: {
+            streams: ['trade_updates']
+          }
+        }));
+      } else {
+        console.error('WebSocket connection not authorized');
+      }
+      break;
+    }
+
+    //LISTENING
+    case 'listening': {
+      console.log('Listening to streams:', messageData.data.streams);
+      if (messageData.data.streams.includes('trade_updates')) {
+        // eventBus.emit(EVENT_TYPES.tick, e);
       }
       break;
     }

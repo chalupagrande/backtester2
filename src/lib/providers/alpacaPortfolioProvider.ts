@@ -1,6 +1,6 @@
 import type { Order } from "../Order";
 import { FetchClient } from "../utils/fetchClient";
-import { Direction, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
+import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
 
 const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
 
@@ -10,7 +10,7 @@ type GetOrderOptions = {
   after?: Date;
   until?: Date;
   side?: OrderSide;
-  direction?: Direction
+  sortDirection?: SortDirection
 }
 
 export class AlpacaPortfolioProvider implements PortfolioProvider {
@@ -18,28 +18,6 @@ export class AlpacaPortfolioProvider implements PortfolioProvider {
 
   constructor() {
     this.client = executionClient;
-  }
-
-  async placeOrder(order: Order) {
-    try {
-      const response = await this.client.request("/orders", {
-        method: 'POST',
-        body: JSON.stringify({
-          symbol: order.symbol,
-          side: order.side,
-          qty: order.qty,
-          type: order.type,
-          time_in_force: order.timeInForce,
-          limit_price: order.limitPrice,
-          stop_price: order.stopPrice,
-          trail_price: order.trailPrice,
-          trail_percent: order.trailPercent,
-        }),
-      });
-      return await response.json();
-    } catch (err) {
-      console.log(err);
-    }
   }
 
   async getOrder(orderId: string) {

@@ -1,43 +1,43 @@
 export const EVENT_TYPES = {
-  tick: 'tick',
-  signal: 'signal',
-  order_placed: 'order_placed',
-  order_filled: 'order_filled',
-  order_canceled: 'order_canceled',
-  context_updated: 'context_updated',
+  TICK: 'TICK',
+  SIGNAL: 'SIGNAL',
+  ORDER_PLACED: 'ORDER_PLACED',
+  ORDER_FILLED: 'ORDER_FILLED',
+  ORDER_CANCELED: 'ORDER_CANCELED',
+  CONTEXT_UPDATED: 'CONTEXT_UPDATED',
 } as const
 
 export const ORDER_SIDE = {
-  buy: 'buy',
-  sell: 'sell'
+  BUY: 'BUY',
+  SELL: 'SELL'
 } as const
 
 export const ORDER_TYPE = {
-  market: 'market',
-  limit: 'limit',
-  stop: 'stop',
-  stop_limit: 'stop_limit',
-  trailing_stop: 'trailing_stop',
+  MARKET: 'MARKET',
+  LIMIT: 'LIMIT',
+  STOP: 'STOP',
+  STOP_LIMIT: 'STOP_LIMIT',
+  TRAILING_STOP: 'TRAILING_STOP',
 } as const
 
 export const ORDER_STATUS = {
-  new: 'new',
-  filled: 'filled',
-  partially_filled: 'partially_filled',
-  canceled: 'canceled',
-  rejected: 'rejected'
+  NEW: 'NEW',
+  FILLED: 'FILLED',
+  PARTIALLY_FILLED: 'PARTIALLY_FILLED',
+  CANCELED: 'CANCELED',
+  REJECTED: 'REJECTED'
 } as const
 
 export const TIME_IN_FORCE = {
-  day: 'day',
-  gtc: 'gtc',
-  opg: 'opg',
-  cls: 'cls',
-  ioc: 'ioc',
-  fok: 'fok',
+  DAY: 'DAY',
+  GTC: 'GTC',
+  OPG: 'OPG',
+  CLS: 'CLS',
+  IOC: 'IOC',
+  FOK: 'FOK',
 } as const
 
-export const DIRECTION = {
-  asc: 'asc',
-  desc: 'desc',
+export const SORT_DIRECTION = {
+  ASC: 'ASC',
+  DESC: 'DESC',
 }
