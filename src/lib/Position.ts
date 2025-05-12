@@ -1,29 +1,29 @@
 export class Position {
   public symbol: string;
-  public quantity: number;
+  public qty: number;
   public averageEntryPrice: number;
   public currentPrice: number;
   public lastUpdated: Date;
 
   constructor(
     symbol: string,
-    quantity: number,
+    qty: number,
     averageEntryPrice: number,
     currentPrice: number
   ) {
     this.symbol = symbol;
-    this.quantity = quantity;
+    this.qty = qty;
     this.averageEntryPrice = averageEntryPrice;
     this.currentPrice = currentPrice;
     this.lastUpdated = new Date();
   }
 
   public getMarketValue(): number {
-    return this.quantity * this.currentPrice;
+    return this.qty * this.currentPrice;
   }
 
   public getUnrealizedPnL(): number {
-    return (this.currentPrice - this.averageEntryPrice) * this.quantity;
+    return (this.currentPrice - this.averageEntryPrice) * this.qty;
   }
 
   public getUnrealizedPnLPercentage(): number {

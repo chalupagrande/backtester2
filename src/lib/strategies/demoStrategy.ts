@@ -2,11 +2,9 @@ import { Event } from '../Event';
 import { Order } from '../Order';
 import type { Portfolio } from '../Portfolio';
 import { Strategy } from '../Strategy';
-import type { ExecutionProvider, Bar } from '../utils/types';
-import type { Context as TContext } from '../Context';
+import type { ExecutionProvider } from '../utils/types';
 import { Context } from '../Context';
 import { EventBus } from '../EventBus';
-import { EVENT_TYPES } from '../utils/constants';
 
 export class DemoStrategy<T> extends Strategy {
   private executionProvider: ExecutionProvider;

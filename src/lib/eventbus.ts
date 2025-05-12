@@ -21,7 +21,7 @@ export class EventBus {
    * Publishes an event to all subscribed and filtered listeners.
    * @param event The event object to publish.
    */
-  public publish<T>(eventType: EventType, data: T): void {
+  public emit<T>(eventType: EventType, data: T): void {
     const event = new Event(eventType, data);
     const eventTypeSubscribers = this.subscribers.get(eventType);
     if (eventTypeSubscribers) {
@@ -33,7 +33,7 @@ export class EventBus {
         } catch (error) {
           console.error(`Error in event handler for event type ${eventType}:`, error);
           // Optionally, publish a specific error event to the bus itself
-          // this.publish({ type: EventType.StrategyError, timestamp: new Date(), data: { sourceEvent: event, error }});
+          // this.emit({ type: EventType.StrategyError, timestamp: new Date(), data: { sourceEvent: event, error }});
         }
       });
     } else {

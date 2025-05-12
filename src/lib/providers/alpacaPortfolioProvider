@@ -1,10 +1,19 @@
 import type { Order } from "../Order";
 import { FetchClient } from "../utils/fetchClient";
-import { ExecutionProvider } from "../utils/types";
+import { Direction, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
 
 const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
 
-export class AlpacaExecutionProvider implements ExecutionProvider {
+type GetOrderOptions = {
+  status?: OrderStatus;
+  limit?: number;
+  after?: Date;
+  until?: Date;
+  side?: OrderSide;
+  direction?: Direction
+}
+
+export class AlpacaPortfolioProvider implements PortfolioProvider {
   private client: FetchClient;
 
   constructor() {
@@ -33,10 +42,10 @@ export class AlpacaExecutionProvider implements ExecutionProvider {
     }
   }
 
-  async cancelOrder(orderId: string) {
+  async getOrder(orderId: string) {
     try {
       const response = await this.client.request(`/orders/${orderId}`, {
-        method: 'DELETE',
+        method: 'GET',
       });
       return await response.json();
     } catch (err) {
@@ -44,11 +53,32 @@ export class AlpacaExecutionProvider implements ExecutionProvider {
     }
   }
 
-  async closeAPosition(symbol: string, qty?: number) {
+
+  async getOrders(options: GetOrderOptions) {
     try {
-      const response = await this.client.request(`/positions/${symbol}`, {
-        method: 'DELETE',
+      let params: Record<string, any> = {}
+      for (const key in options) {
+        if (options[key as keyof GetOrderOptions] !== undefined) {
+          params[key] = options[key as keyof GetOrderOptions];
+        }
+      }
+      const response = await this.client.request("/orders", {
+        method: 'GET',
+        params: params
       });
+
+      return await response.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getPositions() {
+    try {
+      const response = await this.client.request("/positions", {
+        method: 'GET',
+      });
+
       return await response.json();
     } catch (err) {
       console.log(err);

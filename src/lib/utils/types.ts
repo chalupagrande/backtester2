@@ -19,13 +19,15 @@ export type TimeInForce = keyof typeof TIME_IN_FORCE;
 
 export type ExecutionProvider = {
   placeOrder: (order: Order) => Promise<void>;
-  cancelOrder: (orderId: string) => Promise<void>;
-  getOrder: (orderId: string) => Promise<Order | null>;
-  getOrders: (options: any) => Promise<Order[]>;
-  getPositions: () => Promise<Position[]>;
+  cancelOrder: (orderId: string) => Promise<void>
   closeAPosition: (symbol: string) => Promise<void>;
 }
 
+export type PortfolioProvider = {
+  getOrder: (orderId: string) => Promise<Order | null>;
+  getOrders: (options: any) => Promise<Order[]>;
+  getPositions: () => Promise<Position[]>;
+}
 
 export type Bar = {
   c: number;
