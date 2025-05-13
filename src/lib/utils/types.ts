@@ -9,12 +9,15 @@ import {
 import type { Order } from '../Order';
 import type { Position } from '../Position';
 
-export type EventType = keyof typeof EVENT_TYPES;
-export type OrderType = keyof typeof ORDER_TYPE;
-export type OrderSide = keyof typeof ORDER_SIDE;
-export type OrderStatus = keyof typeof ORDER_STATUS;
-export type SortDirection = keyof typeof SORT_DIRECTION;
-export type TimeInForce = keyof typeof TIME_IN_FORCE;
+type ObjectValues<T> = T[keyof T];
+
+export type EventType = ObjectValues<typeof EVENT_TYPES>;
+export type OrderType = ObjectValues<typeof ORDER_TYPE>;
+export type OrderSide = ObjectValues<typeof ORDER_SIDE>;
+export type OrderStatus = ObjectValues<typeof ORDER_STATUS>;
+export type SortDirection = ObjectValues<typeof SORT_DIRECTION>;
+export type TimeInForce = ObjectValues<typeof TIME_IN_FORCE>;
+
 
 
 export type ExecutionProvider = {

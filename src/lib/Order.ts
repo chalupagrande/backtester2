@@ -6,14 +6,15 @@ export type OrderOptions = {
   qty: number,
   side: OrderSide,
   type: OrderType,
+  timeInForce: TimeInForce,
   limitPrice?: number,
   stopPrice?: number,
   trailPrice?: number,
   trailPercent?: number,
-  timeInForce?: TimeInForce,
+  brokerData?: any
 }
 export class Order {
-  public id: string;
+  public internalId: string;
   public symbol: string;
   public qty: number;
   public side: OrderSide;
@@ -22,31 +23,60 @@ export class Order {
   public timeInForce: string;
   public limitPrice?: number;
   public stopPrice?: number;
-  public filledqty: number;
-  public averageFilledPrice: number;
-  public createdAt: Date;
-  public updatedAt: Date;
   public trailPrice?: number;
   public trailPercent?: number;
+  //filled
+  public filledAt: Date | null;
+  public filledQty: number;
+  public filledAvgPrice: number | null;
+  // meta
   public notes: string;
+  private brokerData: any;
+  public createdAt: Date;
+  public updatedAt: Date;
 
-  constructor(options: OrderOptions) {
-    this.id = Math.random().toString(36).substring(7);
-    this.symbol = options.symbol;
-    this.qty = options.qty;
-    this.side = options.side;
-    this.type = options.type;
-    this.status = ORDER_STATUS.NEW;
-    this.timeInForce = TIME_IN_FORCE.DAY;
-    this.limitPrice = options.limitPrice;
-    this.stopPrice = options.stopPrice;
-    this.filledqty = 0;
-    this.averageFilledPrice = 0;
-    this.trailPrice = options.trailPrice;
-    this.trailPercent = options.trailPercent;
+  constructor(opts: OrderOptions) {
+    this.internalId = Math.random().toString(36).substring(2, 15);
+    this.symbol = opts.symbol;
+    this.qty = opts.qty;
+    this.side = opts.side;
+    this.type = opts.type;
+    this.status = ORDER_STATUS.PENDING
+    this.timeInForce = opts.timeInForce
 
+    //order type specific
+    this.limitPrice = opts.limitPrice;
+    this.stopPrice = opts.stopPrice;
+    this.trailPrice = opts.trailPrice;
+    this.trailPercent = opts.trailPercent;
+
+    // filled
+    this.filledAt = null
+    this.filledQty = 0;
+    this.filledAvgPrice = null;
+
+    this.brokerData = opts.brokerData || null;
     this.notes = ""
     this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  public setStatus(status: OrderStatus) {
+    this.status = status;
+    this.updatedAt = new Date();
+  }
+
+  public setBrokerData(data: any) {
+    this.brokerData = data;
+    this.updatedAt = new Date();
+  }
+
+  public getBrokerData() {
+    return this.brokerData;
+  }
+
+  public updateBrokerData(data: any) {
+    this.brokerData = { ...this.brokerData, ...data };
     this.updatedAt = new Date();
   }
 }

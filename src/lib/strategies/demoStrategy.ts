@@ -30,10 +30,13 @@ export class DemoStrategy<T> extends Strategy {
 
   public async handleTick(event: Event<any>): Promise<void> {
     console.log('Executing Demo Strategy...', event);
+    const order = event.data as Order;
+    const response = await this.executionProvider.placeOrder(order)
+    console.log('Order response:', response);
   }
 
-  public async handleOrderFilled(order: Order): Promise<void> {
-    console.log('Handling order:', order);
+  public async handleOrderFilled(event: Event<any>): Promise<void> {
+    console.log('Handling order:', event);
   }
 
   async updateCtx(ctx: Partial<T>) {

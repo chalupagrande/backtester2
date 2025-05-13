@@ -1,37 +1,70 @@
+import { ORDER_SIDE } from "./utils/constants";
+
 export class Position {
+  public internalId: string;
   public symbol: string;
   public qty: number;
   public averageEntryPrice: number;
+  public marketValue: number;
   public currentPrice: number;
-  public lastUpdated: Date;
+  public costBasis: number;
+  public createdAt: Date;
+  public updatedAt: Date;
 
-  constructor(
-    symbol: string,
-    qty: number,
-    averageEntryPrice: number,
-    currentPrice: number
-  ) {
-    this.symbol = symbol;
-    this.qty = qty;
-    this.averageEntryPrice = averageEntryPrice;
-    this.currentPrice = currentPrice;
-    this.lastUpdated = new Date();
+  private brokerData: any;
+  public notes: string;
+
+  constructor() {
+    this.internalId = Math.random().toString(36).substring(2, 15);
+    this.updatedAt = new Date()
+    this.createdAt = new Date();
+
+    // Initialize with default values
+    this.symbol = '';
+    this.qty = 0;
+    this.averageEntryPrice = 0;
+    this.marketValue = 0;
+    this.currentPrice = 0;
+    this.costBasis = 0;
+    this.notes = ''
+
+    this.updateWithOrder = this.updateWithOrder.bind(this);
   }
 
-  public getMarketValue(): number {
-    return this.qty * this.currentPrice;
-  }
+  public updateWithOrder(order: any): void {
+    if (order.side === ORDER_SIDE.BUY) {
+      this.qty += order.qty;
+      this.costBasis += order.filledQty * order.filledAvgPrice;
+      this.averageEntryPrice = (this.averageEntryPrice + order.filledAvgPrice) / this.qty
+    } else if (order.side === ORDER_SIDE.SELL) {
+      this.qty -= order.qty;
+      if (this.qty <= 0) {
+        this.qty = 0;
+        this.costBasis = 0;
+        this.averageEntryPrice = 0;
+        return
+      }
 
-  public getUnrealizedPnL(): number {
-    return (this.currentPrice - this.averageEntryPrice) * this.qty;
-  }
-
-  public getUnrealizedPnLPercentage(): number {
-    return ((this.currentPrice - this.averageEntryPrice) / this.averageEntryPrice) * 100;
+      this.costBasis -= order.filledQty * order.filledAvgPrice;
+      this.averageEntryPrice = (this.averageEntryPrice - order.filledAvgPrice) / this.qty
+    }
+    this.currentPrice = order.filledAvgPrice;
+    this.marketValue = this.qty * this.currentPrice;
+    this.updatedAt = new Date();
   }
 
   public updateCurrentPrice(price: number): void {
     this.currentPrice = price;
-    this.lastUpdated = new Date();
+    this.marketValue = this.qty * this.currentPrice;
+    this.updatedAt = new Date();
+  }
+
+  public setBrokerData(brokerData: any): void {
+    this.brokerData = brokerData;
+    this.updatedAt = new Date();
+  }
+
+  public getBrokerData(): any {
+    return this.brokerData;
   }
 }
