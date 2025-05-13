@@ -27,44 +27,44 @@ eventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick)
 eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, strategy.handleOrderFilled)
 
 
-//  __      _____ ___   ___  ___   ___ _  _____ _____ 
-//  \ \    / / __| _ ) / __|/ _ \ / __| |/ / __|_   _|
-//   \ \/\/ /| _|| _ \ \__ \ (_) | (__| ' <| _|  | |  
-//    \_/\_/ |___|___/ |___/\___/ \___|_|\_\___| |_|  
+//   ___   _ _____ _    __      _____ ___ ___  ___   ___ _  _____ _____ 
+//  |   \ /_\_   _/_\   \ \    / / __| _ ) __|/ _ \ / __| |/ / __|_   _|
+//  | |) / _ \| |/ _ \   \ \/\/ /| _|| _ \__ \ (_) | (__| ' <| _|  | |  
+//  |___/_/ \_\_/_/ \_\   \_/\_/ |___|___/___/\___/ \___|_|\_\___| |_|  
 
-const ws = new WebSocket("wss://paper-api.alpaca.markets/stream");
-ws.on('open', () => {
+const ws1 = new WebSocket("wss://paper-api.alpaca.markets/stream");
+ws1.on('open', () => {
   console.log('Connected to Alpaca WebSocket');
   // authenticate
-  ws.send(JSON.stringify({
+  ws1.send(JSON.stringify({
     action: 'authenticate',
     key: process.env.ALPACA_API_KEY_ID,
     secret: process.env.ALPACA_API_SECRET
   }));
 });
 
-ws.on('message', (buffer: Buffer) => {
+ws1.on('message', (buffer: Buffer) => {
   const messageData = JSON.parse(buffer.toString());
   switch (messageData.stream) {
     // TRADE UPDATES
     case 'trade_updates': {
       console.log('Trade updates:', messageData.data)
-      const data = messageData.data;
-      const order = data.order;
-      if (order && data.event === 'fill') {
-        const curOrder = new Order({
-          symbol: order?.symbol,
-          qty: data?.qty,
-          side: order?.side,
-          type: order?.type,
-          timeInForce: order?.time_in_force,
-          limitPrice: order?.limit_price,
-          stopPrice: order?.stop_price,
-          trailPrice: order?.trail_price,
-          trailPercent: order?.trail_percent
-        })
-        eventBus.emit(EVENT_TYPES.ORDER_FILLED, curOrder);
-      }
+      // const data = messageData.data;
+      // const order = data.order;
+      // if (order && data.event === 'fill') {
+      //   const curOrder = new Order({
+      //     symbol: order?.symbol,
+      //     qty: data?.qty,
+      //     side: order?.side,
+      //     type: order?.type,
+      //     timeInForce: order?.time_in_force,
+      //     limitPrice: order?.limit_price,
+      //     stopPrice: order?.stop_price,
+      //     trailPrice: order?.trail_price,
+      //     trailPercent: order?.trail_percent
+      //   })
+      //   eventBus.emit(EVENT_TYPES.ORDER_FILLED, curOrder);
+      // }
       break;
     }
 
@@ -73,7 +73,7 @@ ws.on('message', (buffer: Buffer) => {
       if (messageData.data.status === 'authorized') {
         // once authorized, listen to the trade_updates stream
         console.log('WebSocket connection authorized');
-        ws.send(JSON.stringify({
+        ws1.send(JSON.stringify({
           action: 'listen',
           data: {
             streams: ['trade_updates']
@@ -101,7 +101,34 @@ ws.on('message', (buffer: Buffer) => {
   }
 })
 
+
+const ws2 = new WebSocket("wss://stream.data.alpaca.markets/v2/test");
+ws2.on('open', () => {
+  console.log('Connected to Alpaca WebSocket');
+  // authenticate
+  ws2.send(JSON.stringify({
+    action: 'auth',
+    key: process.env.ALPACA_API_KEY_ID,
+    secret: process.env.ALPACA_API_SECRET
+  }));
+
+  // wait for authentication
+  setTimeout(() => {
+    ws2.send(JSON.stringify({
+      action: 'subscribe',
+      bars: ["FAKEPACA"],
+    }));
+  }, 3000)
+});
+
+ws2.on('message', (buffer: Buffer) => {
+  const messageData = JSON.parse(buffer.toString());
+  console.log('TEST DATA STREAM:', messageData);
+})
+
+
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing...');
-  ws.close()
+  ws1.close()
+  ws2.close()
 });

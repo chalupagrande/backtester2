@@ -17,7 +17,7 @@ export class Context<T> {
     const newCtx = { ...this.ctx, ...ctx }
     this.ctx = newCtx
     this.lastUpdated = new Date()
-    this.eventBus.emit(EVENT_TYPES.context_updated, newCtx)
+    this.eventBus.emit(EVENT_TYPES.CONTEXT_UPDATED, newCtx)
   }
 
   async get() {

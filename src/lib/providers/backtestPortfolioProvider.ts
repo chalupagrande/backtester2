@@ -1,6 +1,5 @@
 import type { Order } from "../Order";
-import { FetchClient } from "../utils/fetchClient";
-import { Direction, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
+import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
 
 type GetOrderOptions = {
   status?: OrderStatus;
@@ -8,7 +7,7 @@ type GetOrderOptions = {
   after?: Date;
   until?: Date;
   side?: OrderSide;
-  direction?: Direction
+  sortDirection?: SortDirection
 }
 
 export class BacktestPortfolioProvider implements PortfolioProvider {

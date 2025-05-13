@@ -36,8 +36,8 @@ export class Order {
     this.qty = options.qty;
     this.side = options.side;
     this.type = options.type;
-    this.status = ORDER_STATUS.new;
-    this.timeInForce = TIME_IN_FORCE.day;
+    this.status = ORDER_STATUS.NEW;
+    this.timeInForce = TIME_IN_FORCE.DAY;
     this.limitPrice = options.limitPrice;
     this.stopPrice = options.stopPrice;
     this.filledqty = 0;
