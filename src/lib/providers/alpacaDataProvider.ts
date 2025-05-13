@@ -1,24 +1,32 @@
 import { FetchClient } from "../utils/fetchClient";
+import { alpacaMarketDataClient } from "../clients/alpacaClient";
 
-const dataClient = new FetchClient('https://data.alpaca.markets/v2');
-
+type GetBarOptions = {
+  symbols: string,
+  timeframe: string,
+  start?: string,
+  end?: string
+}
 export class AlpacaDataProvider {
   private client: FetchClient;
 
   constructor() {
-    this.client = dataClient;
+    this.client = alpacaMarketDataClient;
     this.getBars = this.getBars.bind(this);
     this.getBarsLatest = this.getBarsLatest.bind(this);
   }
 
-  async getBars(symbols: string, timeframe: string, start?: string, end?: string) {
+  async getBars(options: GetBarOptions) {
+    let params: Record<string, any> = {}
+    for (const key in options) {
+      if (options[key as keyof GetBarOptions] !== undefined) {
+        params[key] = options[key as keyof GetBarOptions];
+      }
+    }
     try {
       const response = await this.client.request("/stocks/bars", {
         method: 'GET',
-        params: {
-          symbols,
-          timeframe,
-        },
+        params: params,
       });
       return await response.json();
     } catch (err) {

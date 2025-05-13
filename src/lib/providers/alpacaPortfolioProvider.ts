@@ -1,8 +1,6 @@
-import type { Order } from "../Order";
+import { alpacaTradingClient } from "../clients/alpacaClient";
 import { FetchClient } from "../utils/fetchClient";
 import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "../utils/types";
-
-const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
 
 type GetOrderOptions = {
   status?: OrderStatus;
@@ -17,7 +15,7 @@ export class AlpacaPortfolioProvider implements PortfolioProvider {
   private client: FetchClient;
 
   constructor() {
-    this.client = executionClient;
+    this.client = alpacaTradingClient;
   }
 
   async getOrder(orderId: string) {

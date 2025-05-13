@@ -1,14 +1,13 @@
 import type { Order } from "../Order";
 import { FetchClient } from "../utils/fetchClient";
 import { ExecutionProvider } from "../utils/types";
-
-const executionClient = new FetchClient('https://paper-api.alpaca.markets/v2');
+import { alpacaTradingClient } from "../clients/alpacaClient";
 
 export class AlpacaExecutionProvider implements ExecutionProvider {
   private client: FetchClient;
 
   constructor() {
-    this.client = executionClient;
+    this.client = alpacaTradingClient;
   }
 
   async placeOrder(order: Order) {
