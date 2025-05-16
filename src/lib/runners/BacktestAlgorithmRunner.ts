@@ -63,16 +63,10 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   }
   
   private async processOrders(tickData: any): Promise<void> {
-    // This is a simplified simulation
-    // In a real implementation, you would:
-    // 1. Check for any open orders
-    // 2. Determine if they would have been filled based on the bar's price range
-    // 3. Emit ORDER_FILLED events for filled orders
-    
-    // For now, we'll just simulate that all orders are filled immediately
-    // at the current bar's price
-    
-    // This would be implemented based on your specific backtesting needs
+    // Use the BacktestExecutionProvider to process orders
+    if (this.executionProvider && 'processPendingOrders' in this.executionProvider) {
+      this.executionProvider.processPendingOrders(tickData);
+    }
   }
   
   private calculateResults(): void {

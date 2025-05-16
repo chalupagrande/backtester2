@@ -44,7 +44,7 @@ const liveRunner = new LiveAlgorithmRunner({
 // Example of how to run a backtest
 const runBacktest = async () => {
   const backtestEventBus = new EventBus();
-  const backtestExecutionProvider = new BacktestExecutionProvider();
+  const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
   const backtestPortfolioProvider = new BacktestPortfolioProvider();
   const backtestStrategy = new DemoStrategy<InitialContextType>({
     initialContext: { last14Bars: [] },
@@ -90,7 +90,7 @@ const runBacktest = async () => {
 // Example of loading event data from a file and running a backtest
 const runBacktestFromFile = async () => {
   const backtestEventBus = new EventBus();
-  const backtestExecutionProvider = new BacktestExecutionProvider();
+  const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
   const backtestPortfolioProvider = new BacktestPortfolioProvider();
   const backtestStrategy = new DemoStrategy<InitialContextType>({
     initialContext: { last14Bars: [] },
