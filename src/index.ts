@@ -3,11 +3,11 @@ dotenv.config();
 import { app } from './server/index';
 import WebSocket from 'ws'
 import { DemoStrategy } from './strategies/demoStrategy';
-import { BacktestExecutionProvider } from './lib/BacktestExecutionProvider';
+import { BacktestExecutionProvider } from './lib/backtesting/BacktestExecutionProvider';
 import { EventBus } from './lib/EventBus';
-import { BacktestPortfolioProvider } from './lib/BacktestPortfolioProvider';
+import { BacktestPortfolioProvider } from './lib/backtesting/BacktestPortfolioProvider';
 import { LiveAlgorithmRunner } from './runners/LiveAlgorithmRunner';
-import { BacktestAlgorithmRunner } from './lib/BacktestAlgorithmRunner';
+import { BacktestAlgorithmRunner } from './lib/backtesting/BacktestAlgorithmRunner';
 import { quiverClient } from './clients/quiverClient';
 import { EVENT_TYPES } from './lib/utils/constants';
 import type { Bar } from './lib/utils/types';

@@ -1,8 +1,9 @@
-import { Order } from "./Order";
-import { Position } from "./Position";
-import { EventBus } from "./EventBus";
-import { EVENT_TYPES, ORDER_STATUS } from "./utils/constants";
-import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "./utils/types";
+import { Order } from "../Order";
+import { Position } from "../Position";
+import { EventBus } from "../EventBus";
+import { EVENT_TYPES, ORDER_STATUS } from "../utils/constants";
+import { SortDirection, OrderSide, OrderStatus } from "../utils/types";
+import { PortfolioProvider } from "../PortfolioProvider";
 
 type GetOrderOptions = {
   status?: OrderStatus;
@@ -13,7 +14,7 @@ type GetOrderOptions = {
   sortDirection?: SortDirection
 }
 
-export class BacktestPortfolioProvider implements PortfolioProvider {
+export class BacktestPortfolioProvider extends PortfolioProvider {
   private orders: Map<string, Order> = new Map();
   private positions: Map<string, Position> = new Map();
   private cash: number;
@@ -26,6 +27,7 @@ export class BacktestPortfolioProvider implements PortfolioProvider {
   }> = [];
 
   constructor(eventBus: EventBus, initialCash: number = 100000) {
+    super()
     this.eventBus = eventBus;
     this.cash = initialCash;
     this.initialCash = initialCash;

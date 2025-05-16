@@ -1,15 +1,15 @@
-import { Order } from "./Order";
-import { EventBus } from "./EventBus";
-import { EVENT_TYPES, ORDER_STATUS } from "./utils/constants";
-import { ExecutionProvider } from "./utils/types";
-import { Event } from "./Event";
+import { Order } from "../Order";
+import { EventBus } from "../EventBus";
+import { EVENT_TYPES, ORDER_STATUS } from "../utils/constants";
+import { ExecutionProvider } from "../ExecutionProvider";
 
-export class BacktestExecutionProvider implements ExecutionProvider {
+export class BacktestExecutionProvider extends ExecutionProvider {
   private orders: Map<string, Order> = new Map();
   private pendingOrders: Order[] = [];
   private eventBus: EventBus;
 
   constructor(eventBus: EventBus) {
+    super();
     this.eventBus = eventBus;
 
     // Bind methods

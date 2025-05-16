@@ -1,8 +1,8 @@
-import { AlgorithmRunner } from './AlgorithmRunner';
-import { EVENT_TYPES } from './utils/constants';
-import { Event } from './Event';
-import { sortEventsByTimestamp } from './utils/eventData';
-import { EventLogger } from './EventLogger';
+import { AlgorithmRunner } from '../AlgorithmRunner';
+import { EVENT_TYPES } from '../utils/constants';
+import { Event } from '../Event';
+import { sortEventsByTimestamp } from '../utils/eventData';
+import { EventLogger } from '../EventLogger';
 
 export class BacktestAlgorithmRunner extends AlgorithmRunner {
   private events: Event<any>[] = [];
