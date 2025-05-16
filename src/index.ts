@@ -56,15 +56,64 @@ const runBacktest = async () => {
   backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
   backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
   
+  // Example of creating events for backtest
+  // In a real scenario, you would load these from a file or database
+  const sampleEvents = [
+    new Event(EVENT_TYPES.TICK, { 
+      symbol: 'AAPL', 
+      c: 150.0, h: 152.0, l: 149.0, o: 149.5, 
+      t: '2023-01-01T09:30:00Z', v: 10000, vw: 150.2, n: 100 
+    }, new Date('2023-01-01T09:30:00Z')),
+    new Event(EVENT_TYPES.TICK, { 
+      symbol: 'AAPL', 
+      c: 151.0, h: 153.0, l: 150.0, o: 150.5, 
+      t: '2023-01-01T09:31:00Z', v: 12000, vw: 151.2, n: 120 
+    }, new Date('2023-01-01T09:31:00Z')),
+    // Add more events as needed
+  ];
+  
   const backtest = new BacktestAlgorithmRunner({
     strategy: backtestStrategy,
     eventBus: backtestEventBus,
     executionProvider: backtestExecutionProvider,
     portfolioProvider: backtestPortfolioProvider,
+    events: sampleEvents,
     startDate: new Date('2023-01-01'),
-    endDate: new Date('2023-12-31'),
-    symbols: ['AAPL', 'MSFT'],
-    dataProvider: alpacaDataProvider
+    endDate: new Date('2023-12-31')
+  });
+  
+  await backtest.start();
+  const results = backtest.getResults();
+  console.log('Backtest results:', results);
+};
+
+// Example of loading event data from a file and running a backtest
+const runBacktestFromFile = async () => {
+  const backtestEventBus = new EventBus();
+  const backtestExecutionProvider = new BacktestExecutionProvider();
+  const backtestPortfolioProvider = new BacktestPortfolioProvider();
+  const backtestStrategy = new DemoStrategy<InitialContextType>({
+    initialContext: { last14Bars: [] },
+    executionProvider: backtestExecutionProvider,
+    portfolio: backtestPortfolioProvider,
+    eventBus: backtestEventBus
+  });
+  
+  backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
+  backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
+  
+  // Load events from a JSON file
+  const { loadEventDataFromFile } = require('./lib/utils/eventData');
+  const events = await loadEventDataFromFile('./src/lib/utils/sampleEventData.json');
+  
+  const backtest = new BacktestAlgorithmRunner({
+    strategy: backtestStrategy,
+    eventBus: backtestEventBus,
+    executionProvider: backtestExecutionProvider,
+    portfolioProvider: backtestPortfolioProvider,
+    events: events,
+    startDate: new Date('2023-01-01'),
+    endDate: new Date('2023-12-31')
   });
   
   await backtest.start();
@@ -74,6 +123,7 @@ const runBacktest = async () => {
 
 // Uncomment to run the backtest
 // runBacktest();
+// runBacktestFromFile();
 
 
 //   ___   _ _____ _    
