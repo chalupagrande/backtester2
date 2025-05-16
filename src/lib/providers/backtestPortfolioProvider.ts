@@ -60,8 +60,8 @@ export class BacktestPortfolioProvider implements PortfolioProvider {
       filteredOrders = filteredOrders.filter(order => order.side === options.side);
     }
 
-    const afterDate = options?.after
-    const untilDate = options?.until
+    const afterDate = options?.after;
+    const untilDate = options?.until;
     if (afterDate) {
       filteredOrders = filteredOrders.filter(order => order.createdAt >= afterDate);
     }

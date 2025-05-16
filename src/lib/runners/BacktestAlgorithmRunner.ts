@@ -64,15 +64,17 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   
   private async processOrders(tickData: any): Promise<void> {
     // Use the BacktestExecutionProvider to process orders
-    if (this.executionProvider && 'processPendingOrders' in this.executionProvider) {
-      this.executionProvider.processPendingOrders(tickData);
+    const provider = this.executionProvider as any;
+    if (provider && typeof provider.processPendingOrders === 'function') {
+      provider.processPendingOrders(tickData);
     }
   }
   
   private calculateResults(): void {
     // Get performance metrics from the portfolio provider
-    if (this.portfolioProvider && 'getPerformanceMetrics' in this.portfolioProvider) {
-      this.results = this.portfolioProvider.getPerformanceMetrics();
+    const provider = this.portfolioProvider as any;
+    if (provider && typeof provider.getPerformanceMetrics === 'function') {
+      this.results = provider.getPerformanceMetrics();
     } else {
       // Fallback to basic metrics if the portfolio provider doesn't support performance metrics
       this.results = {
