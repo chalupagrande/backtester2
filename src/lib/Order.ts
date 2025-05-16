@@ -20,7 +20,7 @@ export class Order {
   public side: OrderSide;
   public type: OrderType;
   public status: OrderStatus;
-  public timeInForce: string;
+  public timeInForce: TimeInForce;
   public limitPrice?: number;
   public stopPrice?: number;
   public trailPrice?: number;
