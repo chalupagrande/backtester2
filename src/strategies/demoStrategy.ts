@@ -8,7 +8,7 @@ import type { ExecutionProvider, PortfolioProvider } from '@lib/utils/types';
 export class DemoStrategy<T> extends Strategy {
   private executionProvider: ExecutionProvider;
   private portfolio: PortfolioProvider;
-  private eventBus: EventBus;
+  protected eventBus: EventBus;
   private ctx: Context<T>;
 
   constructor({ initialContext, executionProvider, portfolio, eventBus }: {
@@ -30,7 +30,7 @@ export class DemoStrategy<T> extends Strategy {
 
   public async handleTick(event: Event<any>): Promise<void> {
     console.log('Executing Demo Strategy...', event);
-    
+
     // Example: If you want to place an order based on some condition
     // Uncomment and modify as needed
     /*

@@ -2,43 +2,45 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { app } from './server/index';
 import WebSocket from 'ws'
-import { EventBus } from '@lib/EventBus';
 import { DemoStrategy } from '@/strategies/demoStrategy';
-import { AlpacaExecutionProvider } from '@/providers/alpacaExecutionProvider';
-import { AlpacaPortfolioProvider } from '@/providers/alpacaPortfolioProvider';
-import { AlpacaDataProvider } from '@/providers/alpacaDataProvider';
 import { BacktestExecutionProvider } from '@lib/BacktestExecutionProvider';
+import { EventBus } from '@lib/EventBus';
 import { BacktestPortfolioProvider } from '@lib/BacktestPortfolioProvider';
 import { LiveAlgorithmRunner } from './runners/LiveAlgorithmRunner';
 import { BacktestAlgorithmRunner } from '@lib/BacktestAlgorithmRunner';
 import { quiverClient } from '@/clients/quiverClient';
 import { EVENT_TYPES } from '@lib/utils/constants';
 import type { Bar } from '@lib/utils/types';
-import { Order } from '@lib/Order';
-import type { Order as TOrder } from '@lib/Order';
 import { Event } from '@lib/Event';
 import { CronJob } from 'cron';
+import { AlpacaDataProvider } from './providers/alpacaDataProvider';
+import { writeFile } from 'fs/promises';
+import path from 'path';
 
+const alapcaDataProvider = new AlpacaDataProvider();
 
-type InitialContextType = {
-  last14Bars: Bar[];
+async function run() {
+  try {
+    const bars = await alapcaDataProvider.getBars({
+      symbols: 'AAPL',
+      timeframe: '1Day',
+      start: '2023-01-01',
+      end: '2023-12-31'
+    });
+
+    const filePath = path.join(__dirname, '..', 'sample-tick-data.json');
+    await writeFile(filePath, JSON.stringify(bars, null, 2), 'utf-8');
+    console.log(`Successfully wrote bars data to ${filePath}`);
+  } catch (error) {
+    console.error('Error fetching or writing bars data:', error instanceof Error ? error.message : error);
+    throw error;
+  }
 }
 
-const alpacaDataProvider = new AlpacaDataProvider();
-const initialContext: InitialContextType = { last14Bars: [] }
-const eventBus = new EventBus();
-const portfolio = new AlpacaPortfolioProvider()
-const executionProvider = new AlpacaExecutionProvider()
-const strategy = new DemoStrategy<InitialContextType>({ initialContext, executionProvider, portfolio, eventBus });
-eventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick)
-eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, strategy.handleOrderFilled)
-
-// Create a live algorithm runner
-const liveRunner = new LiveAlgorithmRunner({
-  strategy,
-  eventBus,
-  executionProvider,
-  portfolioProvider: portfolio
+// Call the function
+run().catch(err => {
+  console.error('Fatal error in run function:', err);
+  process.exit(1);
 });
 
 // Example of how to run a backtest
@@ -46,7 +48,8 @@ const runBacktest = async () => {
   const backtestEventBus = new EventBus();
   const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
   const backtestPortfolioProvider = new BacktestPortfolioProvider(backtestEventBus, 100000);
-  const backtestStrategy = new DemoStrategy<InitialContextType>({
+  const initialContext = { last14Bars: [] };
+  const backtestStrategy = new DemoStrategy<typeof initialContext>({
     initialContext: { last14Bars: [] },
     executionProvider: backtestExecutionProvider,
     portfolio: backtestPortfolioProvider,
@@ -92,7 +95,8 @@ const runBacktestFromFile = async () => {
   const backtestEventBus = new EventBus();
   const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
   const backtestPortfolioProvider = new BacktestPortfolioProvider(backtestEventBus, 100000);
-  const backtestStrategy = new DemoStrategy<InitialContextType>({
+  const initialContext = { last14Bars: [] };
+  const backtestStrategy = new DemoStrategy<typeof initialContext>({
     initialContext: { last14Bars: [] },
     executionProvider: backtestExecutionProvider,
     portfolio: backtestPortfolioProvider,
