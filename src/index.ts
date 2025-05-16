@@ -7,6 +7,10 @@ import { DemoStrategy } from './lib/strategies/demoStrategy';
 import { AlpacaExecutionProvider } from './lib/providers/alpacaExecutionProvider';
 import { AlpacaPortfolioProvider } from './lib/providers/alpacaPortfolioProvider';
 import { AlpacaDataProvider } from './lib/providers/alpacaDataProvider';
+import { BacktestExecutionProvider } from './lib/providers/backtestExecutionProvider';
+import { BacktestPortfolioProvider } from './lib/providers/backtestPortfolioProvider';
+import { LiveAlgorithmRunner } from './lib/runners/LiveAlgorithmRunner';
+import { BacktestAlgorithmRunner } from './lib/runners/BacktestAlgorithmRunner';
 import { quiverClient } from './lib/clients/quiverClient';
 import { EVENT_TYPES, ORDER_SIDE, ORDER_TYPE, TIME_IN_FORCE } from './lib/utils/constants';
 import type { Bar } from './lib/utils/types';
@@ -29,6 +33,48 @@ const strategy = new DemoStrategy<InitialContextType>({ initialContext, executio
 eventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick)
 eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, strategy.handleOrderFilled)
 
+// Create a live algorithm runner
+const liveRunner = new LiveAlgorithmRunner({
+  strategy,
+  eventBus,
+  executionProvider,
+  portfolioProvider: portfolio
+});
+
+// Example of how to run a backtest
+const runBacktest = async () => {
+  const backtestEventBus = new EventBus();
+  const backtestExecutionProvider = new BacktestExecutionProvider();
+  const backtestPortfolioProvider = new BacktestPortfolioProvider();
+  const backtestStrategy = new DemoStrategy<InitialContextType>({
+    initialContext: { last14Bars: [] },
+    executionProvider: backtestExecutionProvider,
+    portfolio: backtestPortfolioProvider,
+    eventBus: backtestEventBus
+  });
+  
+  backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
+  backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
+  
+  const backtest = new BacktestAlgorithmRunner({
+    strategy: backtestStrategy,
+    eventBus: backtestEventBus,
+    executionProvider: backtestExecutionProvider,
+    portfolioProvider: backtestPortfolioProvider,
+    startDate: new Date('2023-01-01'),
+    endDate: new Date('2023-12-31'),
+    symbols: ['AAPL', 'MSFT'],
+    dataProvider: alpacaDataProvider
+  });
+  
+  await backtest.start();
+  const results = backtest.getResults();
+  console.log('Backtest results:', results);
+};
+
+// Uncomment to run the backtest
+// runBacktest();
+
 
 //   ___   _ _____ _    
 //  |   \ /_\_   _/_\  
@@ -39,115 +85,15 @@ eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, strategy.handleOrderFilled)
 //    | | |   / / _ \| |) | _|  | |_| |  _/ |) / _ \| | | _|\__ \
 //    |_| |_|_\/_/ \_\___/|___|  \___/|_| |___/_/ \_\_| |___|___/
 
+// Start the live runner when needed
+// liveRunner.start().catch(err => console.error('Error starting live runner:', err));
 
-// const ws1 = new WebSocket("wss://paper-api.alpaca.markets/stream");
-// ws1.on('open', () => {
-//   console.log('Connected for Trade Updates');
-//   // authenticate
-//   ws1.send(JSON.stringify({
-//     action: 'authenticate',
-//     key: process.env.ALPACA_API_KEY_ID,
-//     secret: process.env.ALPACA_API_SECRET
-//   }));
+// To stop the live runner
+// process.on('SIGINT', async () => {
+//   console.log('Stopping live runner...');
+//   await liveRunner.stop();
+//   process.exit(0);
 // });
-
-// ws1.on('message', (buffer: Buffer) => {
-//   const messageData = JSON.parse(buffer.toString());
-//   switch (messageData.stream) {
-//     // TRADE UPDATES
-//     case 'trade_updates': {
-//       console.log('Trade updates:', messageData.data)
-//       const data = messageData.data;
-//       const order = data.order;
-//       if (order && data.event === 'fill') {
-//         console.log("Calling Order Filled Event");
-//         const curOrder = new Order({
-//           symbol: order?.symbol,
-//           qty: data?.qty,
-//           side: order?.side,
-//           type: order?.type,
-//           timeInForce: order?.time_in_force,
-//           limitPrice: order?.limit_price,
-//           stopPrice: order?.stop_price,
-//           trailPrice: order?.trail_price,
-//           trailPercent: order?.trail_percent
-//         })
-//         const orderFilledEvent = new Event<TOrder>(EVENT_TYPES.ORDER_FILLED, curOrder)
-//         eventBus.emit(EVENT_TYPES.ORDER_FILLED, orderFilledEvent);
-//       }
-//       break;
-//     }
-
-//     //AUTHORIZATION
-//     case 'authorization': {
-//       if (messageData.data.status === 'authorized') {
-//         // once authorized, listen to the trade_updates stream
-//         console.log('WebSocket connection authorized');
-//         ws1.send(JSON.stringify({
-//           action: 'listen',
-//           data: {
-//             streams: ['trade_updates']
-//           }
-//         }));
-//       } else {
-//         console.error('WebSocket connection not authorized');
-//       }
-//       break;
-//     }
-
-//     //LISTENING
-//     case 'listening': {
-//       console.log('Listening to streams:', messageData.data.streams);
-//       if (messageData.data.streams.includes('trade_updates')) {
-//         const curOrder = new Order({
-//           symbol: "AAPL",
-//           qty: 1,
-//           side: ORDER_SIDE.BUY,
-//           type: ORDER_TYPE.MARKET,
-//           timeInForce: TIME_IN_FORCE.GTC,
-//         })
-//         const e = new Event<TOrder>(EVENT_TYPES.TICK, curOrder)
-//         eventBus.emit(EVENT_TYPES.TICK, e);
-//       }
-//       break;
-//     }
-
-//     default: {
-//       console.log('Unknown stream:', messageData.stream);
-//       break;
-//     }
-//   }
-// })
-
-//   __  __   _   ___ _  _____ _____   ___   _ _____ _   
-//  |  \/  | /_\ | _ \ |/ / __|_   _| |   \ /_\_   _/_\  
-//  | |\/| |/ _ \|   / ' <| _|  | |   | |) / _ \| |/ _ \ 
-//  |_|  |_/_/ \_\_|_\_|\_\___| |_|   |___/_/ \_\_/_/ \_\
-
-
-// const ws2 = new WebSocket("wss://stream.data.alpaca.markets/v2/test");
-// ws2.on('open', () => {
-//   console.log('Connected to Market Data');
-//   // authenticate
-//   ws2.send(JSON.stringify({
-//     action: 'auth',
-//     key: process.env.ALPACA_API_KEY_ID,
-//     secret: process.env.ALPACA_API_SECRET
-//   }));
-
-//   // wait for authentication
-//   setTimeout(() => {
-//     ws2.send(JSON.stringify({
-//       action: 'subscribe',
-//       bars: ["FAKEPACA"],
-//     }));
-//   }, 3000)
-// });
-
-// ws2.on('message', (buffer: Buffer) => {
-//   const messageData = JSON.parse(buffer.toString());
-//   console.log('TEST DATA STREAM:', messageData);
-// })
 
 
 //    ___ ___  _  _  ___ ___ ___ ___ ___ 
@@ -180,8 +126,7 @@ app.listen(3000, () => {
 //  | _|| .` | |) |
 //  |___|_|\_|___/ 
 
-// process.on('SIGTERM', () => {
+// process.on('SIGTERM', async () => {
 //   console.log('SIGTERM signal received: closing...');
-//   ws1.close()
-//   ws2.close()
+//   await liveRunner.stop();
 // });
