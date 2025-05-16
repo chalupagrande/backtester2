@@ -11,10 +11,20 @@ export class BacktestExecutionProvider implements ExecutionProvider {
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
+    
+    // Bind methods
     this.placeOrder = this.placeOrder.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
     this.closeAPosition = this.closeAPosition.bind(this);
     this.processPendingOrders = this.processPendingOrders.bind(this);
+    this.handleOrderRequested = this.handleOrderRequested.bind(this);
+    this.handleOrderCancelRequested = this.handleOrderCancelRequested.bind(this);
+    this.handlePositionCloseRequested = this.handlePositionCloseRequested.bind(this);
+    
+    // Subscribe to order-related events
+    this.eventBus.subscribe(EVENT_TYPES.ORDER_REQUESTED, this.handleOrderRequested);
+    this.eventBus.subscribe(EVENT_TYPES.ORDER_CANCEL_REQUESTED, this.handleOrderCancelRequested);
+    this.eventBus.subscribe(EVENT_TYPES.POSITION_CLOSE_REQUESTED, this.handlePositionCloseRequested);
   }
 
   async placeOrder(order: Order): Promise<any> {
@@ -132,5 +142,18 @@ export class BacktestExecutionProvider implements ExecutionProvider {
     this.eventBus.emit(EVENT_TYPES.ORDER_FILLED, order);
 
     console.log(`Backtest order filled: ${order.internalId} at price ${price}`);
+  }
+
+  // Event handlers for order-related events
+  private async handleOrderRequested(orderData: Order): Promise<void> {
+    await this.placeOrder(orderData);
+  }
+
+  private async handleOrderCancelRequested(data: { orderId: string }): Promise<void> {
+    await this.cancelOrder(data.orderId);
+  }
+
+  private async handlePositionCloseRequested(data: { symbol: string }): Promise<void> {
+    await this.closeAPosition(data.symbol);
   }
 }

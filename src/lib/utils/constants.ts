@@ -5,6 +5,17 @@ export const EVENT_TYPES = {
   ORDER_FILLED: 'order_filled',
   ORDER_CANCELED: 'order_canceled',
   CONTEXT_UPDATED: 'context_updated',
+  
+  // Add these new event types
+  ORDER_REQUESTED: 'order_requested',
+  ORDER_CANCEL_REQUESTED: 'order_cancel_requested',
+  POSITION_CLOSE_REQUESTED: 'position_close_requested',
+  POSITION_UPDATED: 'position_updated',
+  PORTFOLIO_UPDATED: 'portfolio_updated',
+  BACKTEST_STARTED: 'backtest_started',
+  BACKTEST_COMPLETED: 'backtest_completed',
+  TICK_RECEIVED: 'tick_received',
+  BAR_RECEIVED: 'bar_received',
 } as const
 
 export const ORDER_SIDE = {
