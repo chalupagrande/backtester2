@@ -55,7 +55,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   
   async stop(): Promise<void> {
     // Nothing to stop in backtesting
-    this.currentIndex = this.historicalData.length;
+    this.currentIndex = this.events.length;
   }
   
   getResults(): any {
