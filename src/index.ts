@@ -45,7 +45,7 @@ const liveRunner = new LiveAlgorithmRunner({
 const runBacktest = async () => {
   const backtestEventBus = new EventBus();
   const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
-  const backtestPortfolioProvider = new BacktestPortfolioProvider();
+  const backtestPortfolioProvider = new BacktestPortfolioProvider(backtestEventBus, 100000);
   const backtestStrategy = new DemoStrategy<InitialContextType>({
     initialContext: { last14Bars: [] },
     executionProvider: backtestExecutionProvider,
@@ -91,7 +91,7 @@ const runBacktest = async () => {
 const runBacktestFromFile = async () => {
   const backtestEventBus = new EventBus();
   const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
-  const backtestPortfolioProvider = new BacktestPortfolioProvider();
+  const backtestPortfolioProvider = new BacktestPortfolioProvider(backtestEventBus, 100000);
   const backtestStrategy = new DemoStrategy<InitialContextType>({
     initialContext: { last14Bars: [] },
     executionProvider: backtestExecutionProvider,

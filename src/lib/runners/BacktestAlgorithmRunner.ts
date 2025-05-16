@@ -70,13 +70,25 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   }
   
   private calculateResults(): void {
-    // Calculate performance metrics
-    // This would be implemented based on your specific metrics
-    this.results = {
-      totalReturn: 0,
-      sharpeRatio: 0,
-      maxDrawdown: 0,
-      // etc.
+    // Get performance metrics from the portfolio provider
+    if (this.portfolioProvider && 'getPerformanceMetrics' in this.portfolioProvider) {
+      this.results = this.portfolioProvider.getPerformanceMetrics();
+    } else {
+      // Fallback to basic metrics if the portfolio provider doesn't support performance metrics
+      this.results = {
+        totalReturn: 0,
+        sharpeRatio: 0,
+        maxDrawdown: 0,
+        message: "Portfolio provider doesn't support detailed performance metrics"
+      };
+    }
+    
+    // Add backtest metadata
+    this.results.backtestInfo = {
+      startDate: this.startDate,
+      endDate: this.endDate,
+      eventsProcessed: this.events.length,
+      runDate: new Date()
     };
   }
 }
