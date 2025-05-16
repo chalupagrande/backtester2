@@ -1,4 +1,4 @@
-import { Event } from '../Event';
+import { Event } from '@lib/Event';
 
 /**
  * Interface for event data that can be loaded from JSON
@@ -15,10 +15,10 @@ export interface EventData {
  * Convert raw event data to Event objects
  */
 export function parseEventData(eventData: EventData): Event<any>[] {
-  return eventData.events.map(event => 
+  return eventData.events.map(event =>
     new Event(
-      event.type as any, 
-      event.data, 
+      event.type as any,
+      event.data,
       new Date(event.timestamp)
     )
   );

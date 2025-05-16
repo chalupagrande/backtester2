@@ -1,4 +1,4 @@
-import { ORDER_SIDE } from "./utils/constants";
+import { ORDER_SIDE } from "@lib/utils/constants";
 
 export class Position {
   public internalId: string;

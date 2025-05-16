@@ -6,8 +6,8 @@ import {
   SORT_DIRECTION,
   TIME_IN_FORCE
 } from './constants';
-import type { Order } from '../Order';
-import type { Position } from '../Position';
+import type { Order } from '@lib/Order';
+import type { Position } from '@lib/Position';
 
 type ObjectValues<T> = T[keyof T];
 

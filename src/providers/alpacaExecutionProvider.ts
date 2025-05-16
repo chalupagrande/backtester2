@@ -1,7 +1,7 @@
-import type { Order } from "../Order";
-import { FetchClient } from "../utils/fetchClient";
-import { ExecutionProvider } from "../utils/types";
-import { alpacaTradingClient } from "../clients/alpacaClient";
+import type { Order } from "@lib/Order";
+import { FetchClient } from "@lib/utils/fetchClient";
+import { ExecutionProvider } from "@lib/utils/types";
+import { alpacaTradingClient } from "@/clients/alpacaClient";
 
 export class AlpacaExecutionProvider implements ExecutionProvider {
   private client: FetchClient;

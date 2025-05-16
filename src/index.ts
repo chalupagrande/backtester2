@@ -2,21 +2,21 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { app } from './server/index';
 import WebSocket from 'ws'
-import { EventBus } from './lib/EventBus';
-import { DemoStrategy } from './lib/strategies/demoStrategy';
-import { AlpacaExecutionProvider } from './lib/providers/alpacaExecutionProvider';
-import { AlpacaPortfolioProvider } from './lib/providers/alpacaPortfolioProvider';
-import { AlpacaDataProvider } from './lib/providers/alpacaDataProvider';
-import { BacktestExecutionProvider } from './lib/providers/backtestExecutionProvider';
-import { BacktestPortfolioProvider } from './lib/providers/backtestPortfolioProvider';
-import { LiveAlgorithmRunner } from './lib/runners/LiveAlgorithmRunner';
-import { BacktestAlgorithmRunner } from './lib/runners/BacktestAlgorithmRunner';
-import { quiverClient } from './lib/clients/quiverClient';
-import { EVENT_TYPES, ORDER_SIDE, ORDER_TYPE, TIME_IN_FORCE } from './lib/utils/constants';
-import type { Bar } from './lib/utils/types';
-import { Order } from './lib/Order';
-import type { Order as TOrder } from './lib/Order';
-import { Event } from './lib/Event';
+import { EventBus } from '@lib/EventBus';
+import { DemoStrategy } from '@/strategies/demoStrategy';
+import { AlpacaExecutionProvider } from '@/providers/alpacaExecutionProvider';
+import { AlpacaPortfolioProvider } from '@/providers/alpacaPortfolioProvider';
+import { AlpacaDataProvider } from '@/providers/alpacaDataProvider';
+import { BacktestExecutionProvider } from '@lib/BacktestExecutionProvider';
+import { BacktestPortfolioProvider } from '@lib/BacktestPortfolioProvider';
+import { LiveAlgorithmRunner } from './runners/LiveAlgorithmRunner';
+import { BacktestAlgorithmRunner } from '@lib/BacktestAlgorithmRunner';
+import { quiverClient } from '@/clients/quiverClient';
+import { EVENT_TYPES } from '@lib/utils/constants';
+import type { Bar } from '@lib/utils/types';
+import { Order } from '@lib/Order';
+import type { Order as TOrder } from '@lib/Order';
+import { Event } from '@lib/Event';
 import { CronJob } from 'cron';
 
 
@@ -52,26 +52,26 @@ const runBacktest = async () => {
     portfolio: backtestPortfolioProvider,
     eventBus: backtestEventBus
   });
-  
+
   backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
   backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
-  
+
   // Example of creating events for backtest
   // In a real scenario, you would load these from a file or database
   const sampleEvents = [
-    new Event(EVENT_TYPES.TICK, { 
-      symbol: 'AAPL', 
-      c: 150.0, h: 152.0, l: 149.0, o: 149.5, 
-      t: '2023-01-01T09:30:00Z', v: 10000, vw: 150.2, n: 100 
+    new Event(EVENT_TYPES.TICK, {
+      symbol: 'AAPL',
+      c: 150.0, h: 152.0, l: 149.0, o: 149.5,
+      t: '2023-01-01T09:30:00Z', v: 10000, vw: 150.2, n: 100
     }, new Date('2023-01-01T09:30:00Z')),
-    new Event(EVENT_TYPES.TICK, { 
-      symbol: 'AAPL', 
-      c: 151.0, h: 153.0, l: 150.0, o: 150.5, 
-      t: '2023-01-01T09:31:00Z', v: 12000, vw: 151.2, n: 120 
+    new Event(EVENT_TYPES.TICK, {
+      symbol: 'AAPL',
+      c: 151.0, h: 153.0, l: 150.0, o: 150.5,
+      t: '2023-01-01T09:31:00Z', v: 12000, vw: 151.2, n: 120
     }, new Date('2023-01-01T09:31:00Z')),
     // Add more events as needed
   ];
-  
+
   const backtest = new BacktestAlgorithmRunner({
     strategy: backtestStrategy,
     eventBus: backtestEventBus,
@@ -81,7 +81,7 @@ const runBacktest = async () => {
     startDate: new Date('2023-01-01'),
     endDate: new Date('2023-12-31')
   });
-  
+
   await backtest.start();
   const results = backtest.getResults();
   console.log('Backtest results:', results);
@@ -98,14 +98,14 @@ const runBacktestFromFile = async () => {
     portfolio: backtestPortfolioProvider,
     eventBus: backtestEventBus
   });
-  
+
   backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
   backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
-  
+
   // Load events from a JSON file
-  const { loadEventDataFromFile } = require('./lib/utils/eventData');
+  const { loadEventDataFromFile } = require('@lib/utils/eventData');
   const events = await loadEventDataFromFile('./src/lib/utils/sampleEventData.json');
-  
+
   const backtest = new BacktestAlgorithmRunner({
     strategy: backtestStrategy,
     eventBus: backtestEventBus,
@@ -115,7 +115,7 @@ const runBacktestFromFile = async () => {
     startDate: new Date('2023-01-01'),
     endDate: new Date('2023-12-31')
   });
-  
+
   await backtest.start();
   const results = backtest.getResults();
   console.log('Backtest results:', results);

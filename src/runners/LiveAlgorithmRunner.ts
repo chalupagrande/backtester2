@@ -1,34 +1,34 @@
-import { AlgorithmRunner } from './AlgorithmRunner';
-import { EVENT_TYPES } from '../utils/constants';
+import { AlgorithmRunner } from '@lib/AlgorithmRunner';
+import { EVENT_TYPES } from '../lib/utils/constants';
 import WebSocket from 'ws';
-import { Event } from '../Event';
-import { Order } from '../Order';
-import type { Order as TOrder } from '../Order';
+import { Event } from '../lib/Event';
+import { Order } from '../lib/Order';
+import type { Order as TOrder } from '../lib/Order';
 
 export class LiveAlgorithmRunner extends AlgorithmRunner {
   private tradeUpdatesWs: WebSocket | null = null;
   private marketDataWs: WebSocket | null = null;
-  
+
   async start(): Promise<void> {
     // Connect to Alpaca WebSockets
     this.connectTradeUpdates();
     this.connectMarketData();
   }
-  
+
   async stop(): Promise<void> {
     // Close WebSockets
     if (this.tradeUpdatesWs) this.tradeUpdatesWs.close();
     if (this.marketDataWs) this.marketDataWs.close();
   }
-  
+
   getResults(): any {
     // Return current portfolio stats
     return this.portfolioProvider.getPositions();
   }
-  
+
   private connectTradeUpdates(): void {
     this.tradeUpdatesWs = new WebSocket("wss://paper-api.alpaca.markets/stream");
-    
+
     this.tradeUpdatesWs.on('open', () => {
       console.log('Connected for Trade Updates');
       // Authenticate
@@ -38,10 +38,10 @@ export class LiveAlgorithmRunner extends AlgorithmRunner {
         secret: process.env.ALPACA_API_SECRET
       }));
     });
-    
+
     this.tradeUpdatesWs.on('message', (buffer: Buffer) => {
       const messageData = JSON.parse(buffer.toString());
-      
+
       switch (messageData.stream) {
         // TRADE UPDATES
         case 'trade_updates': {
@@ -97,10 +97,10 @@ export class LiveAlgorithmRunner extends AlgorithmRunner {
       }
     });
   }
-  
+
   private connectMarketData(): void {
     this.marketDataWs = new WebSocket("wss://stream.data.alpaca.markets/v2/test");
-    
+
     this.marketDataWs.on('open', () => {
       console.log('Connected to Market Data');
       // authenticate
@@ -121,7 +121,7 @@ export class LiveAlgorithmRunner extends AlgorithmRunner {
 
     this.marketDataWs.on('message', (buffer: Buffer) => {
       const messageData = JSON.parse(buffer.toString());
-      
+
       // Process market data and emit tick events
       if (messageData[0] && messageData[0].T === 'b') {
         // Bar data
