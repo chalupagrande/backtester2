@@ -2,6 +2,7 @@
   "name": "trading-bot-2",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",

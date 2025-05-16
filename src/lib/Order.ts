@@ -1,5 +1,5 @@
-import type { OrderSide, OrderType, OrderStatus, TimeInForce } from '@lib/utils/types';
-import { ORDER_STATUS, TIME_IN_FORCE } from '@lib/utils/constants';
+import type { OrderSide, OrderType, OrderStatus, TimeInForce } from './utils/types';
+import { ORDER_STATUS, TIME_IN_FORCE } from './utils/constants';
 
 export type OrderOptions = {
   symbol: string,

@@ -1,4 +1,4 @@
-import { FetchClient } from "@/lib/utils/fetchClient";
+import { FetchClient } from "../lib/utils/fetchClient";
 
 const quiverApiToken = process.env.QUIVER_API_TOKEN;
 if (!quiverApiToken || typeof quiverApiToken !== 'string') {

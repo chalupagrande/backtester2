@@ -1,4 +1,4 @@
-import { Event } from '@lib/Event';
+import { Event } from '../Event';
 
 /**
  * Interface for event data that can be loaded from JSON

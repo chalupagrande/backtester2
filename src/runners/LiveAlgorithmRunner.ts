@@ -1,4 +1,4 @@
-import { AlgorithmRunner } from '@lib/AlgorithmRunner';
+import { AlgorithmRunner } from '../lib/AlgorithmRunner';
 import { EVENT_TYPES } from '../lib/utils/constants';
 import WebSocket from 'ws';
 import { Event } from '../lib/Event';

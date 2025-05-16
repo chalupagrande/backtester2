@@ -1,4 +1,4 @@
-import { FetchClient } from "@/lib/utils/fetchClient";
+import { FetchClient } from "../lib/utils/fetchClient";
 const apiKeyId = process.env.ALPACA_API_KEY_ID;
 const apiSecret = process.env.ALPACA_API_SECRET;
 

@@ -1,4 +1,4 @@
-import type { EventType } from '@lib/utils/types';
+import type { EventType } from './utils/types';
 
 export class Event<T> {
   type: EventType;

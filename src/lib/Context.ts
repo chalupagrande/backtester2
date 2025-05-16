@@ -1,5 +1,5 @@
-import { EventBus } from "@lib/EventBus"
-import { EVENT_TYPES } from "@lib/utils/constants"
+import { EventBus } from "./EventBus"
+import { EVENT_TYPES } from "./utils/constants"
 
 export class Context<T> {
   private ctx: T

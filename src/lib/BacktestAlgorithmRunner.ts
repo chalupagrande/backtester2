@@ -1,8 +1,8 @@
-import { AlgorithmRunner } from '@lib/AlgorithmRunner';
-import { EVENT_TYPES } from '@lib/utils/constants';
-import { Event } from '@lib/Event';
-import { sortEventsByTimestamp } from '@lib/utils/eventData';
-import { EventLogger } from '@lib/EventLogger';
+import { AlgorithmRunner } from './AlgorithmRunner';
+import { EVENT_TYPES } from './utils/constants';
+import { Event } from './Event';
+import { sortEventsByTimestamp } from './utils/eventData';
+import { EventLogger } from './EventLogger';
 
 export class BacktestAlgorithmRunner extends AlgorithmRunner {
   private events: Event<any>[] = [];
@@ -25,7 +25,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
     this.events = sortEventsByTimestamp(options.events);
     this.startDate = options.startDate || new Date(0);
     this.endDate = options.endDate || new Date();
-    
+
     // Initialize the event logger
     this.eventLogger = new EventLogger(this.eventBus, { logToConsole: true });
 
@@ -40,7 +40,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
 
   async start(): Promise<void> {
     console.log(`Starting backtest with ${this.events.length} events`);
-    
+
     // Emit backtest started event
     this.eventBus.emit(EVENT_TYPES.BACKTEST_STARTED, {
       startDate: this.startDate,

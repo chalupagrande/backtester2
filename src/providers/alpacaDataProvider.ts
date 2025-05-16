@@ -1,5 +1,5 @@
-import { FetchClient } from "@lib/utils/fetchClient";
-import { alpacaMarketDataClient } from "@/clients/alpacaClient";
+import { FetchClient } from "../lib/utils/fetchClient";
+import { alpacaMarketDataClient } from "../clients/alpacaClient";
 
 type GetBarOptions = {
   symbols: string,

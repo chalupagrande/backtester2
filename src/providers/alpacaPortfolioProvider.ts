@@ -1,6 +1,6 @@
-import { alpacaTradingClient } from "@/clients/alpacaClient";
-import { FetchClient } from "@lib/utils/fetchClient";
-import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "@lib/utils/types";
+import { alpacaTradingClient } from "../clients/alpacaClient";
+import { FetchClient } from "../lib/utils/fetchClient";
+import { SortDirection, OrderSide, OrderStatus, PortfolioProvider } from "../lib/utils/types";
 
 type GetOrderOptions = {
   status?: OrderStatus;

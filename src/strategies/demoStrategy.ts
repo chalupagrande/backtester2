@@ -1,9 +1,9 @@
-import { Event } from '@lib/Event';
-import { Order } from '@lib/Order';
-import { Strategy } from '@lib/Strategy';
-import { Context } from '@lib/Context';
-import { EventBus } from '@lib/EventBus';
-import type { ExecutionProvider, PortfolioProvider } from '@lib/utils/types';
+import { Event } from '../lib/Event';
+import { Order } from '../lib/Order';
+import { Strategy } from '../lib/Strategy';
+import { Context } from '../lib/Context';
+import { EventBus } from '../lib/EventBus';
+import type { ExecutionProvider, PortfolioProvider } from '../lib/utils/types';
 
 export class DemoStrategy<T> extends Strategy {
   private executionProvider: ExecutionProvider;

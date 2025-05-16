@@ -2,16 +2,16 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { app } from './server/index';
 import WebSocket from 'ws'
-import { DemoStrategy } from '@/strategies/demoStrategy';
-import { BacktestExecutionProvider } from '@lib/BacktestExecutionProvider';
-import { EventBus } from '@lib/EventBus';
-import { BacktestPortfolioProvider } from '@lib/BacktestPortfolioProvider';
+import { DemoStrategy } from './strategies/demoStrategy';
+import { BacktestExecutionProvider } from './lib/BacktestExecutionProvider';
+import { EventBus } from './lib/EventBus';
+import { BacktestPortfolioProvider } from './lib/BacktestPortfolioProvider';
 import { LiveAlgorithmRunner } from './runners/LiveAlgorithmRunner';
-import { BacktestAlgorithmRunner } from '@lib/BacktestAlgorithmRunner';
-import { quiverClient } from '@/clients/quiverClient';
-import { EVENT_TYPES } from '@lib/utils/constants';
-import type { Bar } from '@lib/utils/types';
-import { Event } from '@lib/Event';
+import { BacktestAlgorithmRunner } from './lib/BacktestAlgorithmRunner';
+import { quiverClient } from './clients/quiverClient';
+import { EVENT_TYPES } from './lib/utils/constants';
+import type { Bar } from './lib/utils/types';
+import { Event } from './lib/Event';
 import { CronJob } from 'cron';
 import { AlpacaDataProvider } from './providers/alpacaDataProvider';
 import { writeFile } from 'fs/promises';
@@ -107,7 +107,7 @@ const runBacktestFromFile = async () => {
   backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
 
   // Load events from a JSON file
-  const { loadEventDataFromFile } = require('@lib/utils/eventData');
+  const { loadEventDataFromFile } = require('./lib/utils/eventData');
   const events = await loadEventDataFromFile('./src/lib/utils/sampleEventData.json');
 
   const backtest = new BacktestAlgorithmRunner({

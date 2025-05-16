@@ -1,8 +1,8 @@
-import { Order } from "@lib/Order";
-import { EventBus } from "@lib/EventBus";
-import { EVENT_TYPES, ORDER_STATUS } from "@lib/utils/constants";
-import { ExecutionProvider } from "@lib/utils/types";
-import { Event } from "@lib/Event";
+import { Order } from "./Order";
+import { EventBus } from "./EventBus";
+import { EVENT_TYPES, ORDER_STATUS } from "./utils/constants";
+import { ExecutionProvider } from "./utils/types";
+import { Event } from "./Event";
 
 export class BacktestExecutionProvider implements ExecutionProvider {
   private orders: Map<string, Order> = new Map();
@@ -11,7 +11,7 @@ export class BacktestExecutionProvider implements ExecutionProvider {
 
   constructor(eventBus: EventBus) {
     this.eventBus = eventBus;
-    
+
     // Bind methods
     this.placeOrder = this.placeOrder.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
@@ -20,7 +20,7 @@ export class BacktestExecutionProvider implements ExecutionProvider {
     this.handleOrderRequested = this.handleOrderRequested.bind(this);
     this.handleOrderCancelRequested = this.handleOrderCancelRequested.bind(this);
     this.handlePositionCloseRequested = this.handlePositionCloseRequested.bind(this);
-    
+
     // Subscribe to order-related events
     this.eventBus.subscribe(EVENT_TYPES.ORDER_REQUESTED, this.handleOrderRequested);
     this.eventBus.subscribe(EVENT_TYPES.ORDER_CANCEL_REQUESTED, this.handleOrderCancelRequested);

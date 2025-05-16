@@ -1,6 +1,6 @@
-import { EventBus } from '@lib/EventBus';
-import { Strategy } from '@lib/Strategy';
-import { ExecutionProvider, PortfolioProvider } from '@lib/utils/types';
+import { EventBus } from './EventBus';
+import { Strategy } from './Strategy';
+import { ExecutionProvider, PortfolioProvider } from './utils/types';
 
 export abstract class AlgorithmRunner {
   protected strategy: Strategy;

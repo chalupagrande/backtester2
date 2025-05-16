@@ -1,5 +1,5 @@
-import { EventType } from '@lib/utils/types';
-import { Event } from '@lib/Event';
+import { EventType } from './utils/types';
+import { Event } from './Event';
 
 type EventHandler<T = any> = (payload: T, event: Event<T>) => void | Promise<void>;
 type EventFilter<T = any> = (payload: T, event: Event<T>) => boolean;
