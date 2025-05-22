@@ -56,11 +56,9 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
 
       // Emit the event to the event bus
       this.eventBus.emit(event.type, event.data);
-
-      // If this is a tick event, process any pending orders
-      if (event.type === EVENT_TYPES.TICK) {
-        await this.processOrders(event.data);
-      }
+      
+      // No need to explicitly call processOrders here as the BacktestExecutionProvider
+      // is already subscribed to the relevant events and will process orders accordingly
     }
 
     // Emit backtest completed event
@@ -86,13 +84,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
     };
   }
 
-  private async processOrders(tickData: any): Promise<void> {
-    // Use the BacktestExecutionProvider to process orders
-    const provider = this.executionProvider as any;
-    if (provider && typeof provider.processPendingOrders === 'function') {
-      provider.processPendingOrders(tickData);
-    }
-  }
+  // processOrders method removed as it's handled by the BacktestExecutionProvider
 
   private calculateResults(): void {
     // Get performance metrics from the execution provider
