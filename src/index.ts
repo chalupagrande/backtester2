@@ -1,18 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { app } from './server/index';
-import WebSocket from 'ws'
 import { DemoStrategy } from './strategies/demoStrategy';
 import { BacktestExecutionProvider } from './lib/backtesting/BacktestExecutionProvider';
 import { EventBus } from './lib/EventBus';
 import { BacktestPortfolioProvider } from './lib/backtesting/BacktestPortfolioProvider';
-import { LiveAlgorithmRunner } from './runners/LiveAlgorithmRunner';
 import { BacktestAlgorithmRunner } from './lib/backtesting/BacktestAlgorithmRunner';
-import { quiverClient } from './clients/quiverClient';
 import { EVENT_TYPES } from './lib/utils/constants';
-import type { Bar } from './lib/utils/types';
 import { Event } from './lib/Event';
-import { CronJob } from 'cron';
+
 import { AlpacaDataProvider } from './providers/alpacaDataProvider';
 import { writeFile } from 'fs/promises';
 import path from 'path';
@@ -90,85 +86,15 @@ const runBacktest = async () => {
   console.log('Backtest results:', results);
 };
 
-// Example of loading event data from a file and running a backtest
-const runBacktestFromFile = async () => {
-  const backtestEventBus = new EventBus();
-  const backtestExecutionProvider = new BacktestExecutionProvider(backtestEventBus);
-  const backtestPortfolioProvider = new BacktestPortfolioProvider(backtestEventBus, 100000);
-  const initialContext = { last14Bars: [] };
-  const backtestStrategy = new DemoStrategy<typeof initialContext>({
-    initialContext: { last14Bars: [] },
-    executionProvider: backtestExecutionProvider,
-    portfolio: backtestPortfolioProvider,
-    eventBus: backtestEventBus
-  });
 
-  backtestEventBus.subscribe(EVENT_TYPES.TICK, backtestStrategy.handleTick);
-  backtestEventBus.subscribe(EVENT_TYPES.ORDER_FILLED, backtestStrategy.handleOrderFilled);
-
-  // Load events from a JSON file
-  const { loadEventDataFromFile } = require('./lib/utils/eventData');
-  const events = await loadEventDataFromFile('./src/lib/utils/sampleEventData.json');
-
-  const backtest = new BacktestAlgorithmRunner({
-    strategy: backtestStrategy,
-    eventBus: backtestEventBus,
-    executionProvider: backtestExecutionProvider,
-    portfolioProvider: backtestPortfolioProvider,
-    events: events,
-    startDate: new Date('2023-01-01'),
-    endDate: new Date('2023-12-31')
-  });
-
-  await backtest.start();
-  const results = backtest.getResults();
-  console.log('Backtest results:', results);
-};
 
 // Uncomment to run the backtest
 // runBacktest();
 // runBacktestFromFile();
 
 
-//   ___   _ _____ _    
-//  |   \ /_\_   _/_\  
-//  | |) / _ \| |/ _ \ 
-//  |___/_/ \_\_/_/ \_\ 
-//   _____ ___    _   ___  ___   _   _ ___ ___   _ _____ ___ ___ 
-//  |_   _| _ \  /_\ |   \| __| | | | | _ \   \ /_\_   _| __/ __|
-//    | | |   / / _ \| |) | _|  | |_| |  _/ |) / _ \| | | _|\__ \
-//    |_| |_|_\/_/ \_\___/|___|  \___/|_| |___/_/ \_\_| |___|___/
-
-// Start the live runner when needed
-// liveRunner.start().catch(err => console.error('Error starting live runner:', err));
-
-// To stop the live runner
-// process.on('SIGINT', async () => {
-//   console.log('Stopping live runner...');
-//   await liveRunner.stop();
-//   process.exit(0);
-// });
 
 
-//    ___ ___  _  _  ___ ___ ___ ___ ___ 
-//   / __/ _ \| \| |/ __| _ \ __/ __/ __|
-//  | (_| (_) | .` | (_ |   / _|\__ \__ \
-//   \___\___/|_|\_|\___|_|_\___|___/___/
-
-
-const job = new CronJob('* * * * *', async () => {
-  console.log('Running Quiver Data Fetch Job');
-  const response = await quiverClient.request("/bulk/congresstrading", {
-    params: {
-      page_size: 20,
-      normalized: false
-    }
-  })
-
-  console.log('Quiver Data:', response.status, await response.json());
-}, null, true, "America/Chicago")
-
-// job.start()
 
 
 app.listen(3000, () => {

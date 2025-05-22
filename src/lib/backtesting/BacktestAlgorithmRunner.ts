@@ -3,6 +3,10 @@ import { EVENT_TYPES } from '../utils/constants';
 import { Event } from '../Event';
 import { sortEventsByTimestamp } from '../utils/eventData';
 import { EventLogger } from '../EventLogger';
+import { EventBus } from '../EventBus';
+import { Strategy } from '../Strategy';
+import { ExecutionProvider } from '../ExecutionProvider';
+import { PortfolioProvider } from '../PortfolioProvider';
 
 export class BacktestAlgorithmRunner extends AlgorithmRunner {
   private events: Event<any>[] = [];
@@ -13,10 +17,10 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   private eventLogger: EventLogger;
 
   constructor(options: {
-    strategy: any;
-    eventBus: any;
-    executionProvider: any;
-    portfolioProvider: any;
+    strategy: Strategy;
+    eventBus: EventBus;
+    executionProvider: ExecutionProvider;
+    portfolioProvider: PortfolioProvider;
     events: Event<any>[];
     startDate?: Date;
     endDate?: Date;
