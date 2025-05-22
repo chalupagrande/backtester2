@@ -332,6 +332,25 @@ export class BacktestExecutionProvider extends ExecutionProvider {
     return this.cash + positionsValue;
   }
 
+  // Implement abstract methods for cash management
+  public getCash(): number {
+    return this.cash;
+  }
+  
+  public setCash(amount: number): void {
+    this.cash = amount;
+    this.recordPortfolioState();
+  }
+  
+  // Implement abstract methods for order tracking
+  public getPendingOrders(): Order[] {
+    return [...this.pendingOrders];
+  }
+  
+  public getAllOrders(): Map<string, Order> {
+    return new Map(this.orders);
+  }
+  
   // Get portfolio history for analysis
   public getPortfolioHistory(): Array<{ timestamp: Date, equity: number, cash: number }> {
     return this.portfolioHistory;

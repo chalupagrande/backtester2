@@ -109,4 +109,59 @@ export class AlpacaExecutionProvider extends ExecutionProvider {
       return [];
     }
   }
+  
+  // Portfolio value methods
+  getPortfolioValue(): number {
+    // This would need to be implemented with a real API call to get account info
+    // For now, return a placeholder
+    return 0;
+  }
+  
+  getPortfolioHistory(): Array<{ timestamp: Date, equity: number, cash: number }> {
+    // This would need to be implemented with a real API call to get historical account values
+    // For now, return an empty array
+    return [];
+  }
+  
+  getPerformanceMetrics(): any {
+    // This would need to be implemented with calculations based on account history
+    // For now, return a placeholder object
+    return {
+      totalReturn: 0,
+      totalReturnPct: 0,
+      maxDrawdown: 0,
+      maxDrawdownPct: 0
+    };
+  }
+  
+  // Cash management
+  getCash(): number {
+    // This would need to be implemented with a real API call to get account cash
+    // For now, return a placeholder
+    return 0;
+  }
+  
+  setCash(amount: number): void {
+    // This would be a no-op in a real broker as you can't directly set cash
+    console.log(`Cannot directly set cash in a real broker. Attempted amount: ${amount}`);
+  }
+  
+  // Order tracking
+  getPendingOrders(): Order[] {
+    // This would need to be implemented to filter orders by status
+    // For now, return an empty array
+    return [];
+  }
+  
+  getAllOrders(): Map<string, Order> {
+    // This would need to be implemented to get all orders and convert to a Map
+    // For now, return an empty Map
+    return new Map();
+  }
+  
+  // Process orders against market data
+  processPendingOrders(tickData: any): void {
+    // This would be a no-op in a real broker as orders are processed by the exchange
+    console.log(`Orders are processed by the exchange in a real broker. Tick data: ${JSON.stringify(tickData)}`);
+  }
 }
