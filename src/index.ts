@@ -1,17 +1,46 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { app } from './server/index';
-import { DemoStrategy } from './strategies/demoStrategy';
 import { BacktestExecutionProvider } from './lib/backtesting/BacktestExecutionProvider';
 import { EventBus } from './lib/EventBus';
 import { BacktestAlgorithmRunner } from './lib/backtesting/BacktestAlgorithmRunner';
 import { EVENT_TYPES } from './lib/utils/constants';
 import { Event } from './lib/Event';
-
 import { AlpacaDataProvider } from './providers/alpacaDataProvider';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import { DualSMAStrategy } from './strategies/DualSMAStrategy';
+import AppleStockData from './data/AAPL-2023-1D.json';
+import { Bar } from './lib/utils/types';
 
+const AAPLBars = AppleStockData.bars.AAPL
+const AAPLTickEvents = AAPLBars.map((bar: Bar) => {
+  return new Event(EVENT_TYPES.TICK, {
+    data: bar
+  }, new Date(bar.t))
+})
+
+const backtestEventBus = new EventBus();
+const backtestExecutionProvider = new BacktestExecutionProvider({
+  eventBus: backtestEventBus,
+  initialCash: 10000,
+})
+
+const strategy = new DualSMAStrategy({
+  eventBus: backtestEventBus,
+  executionProvider: backtestExecutionProvider,
+})
+
+const backtestRunner = new BacktestAlgorithmRunner({
+  strategy,
+  eventBus: backtestEventBus,
+  executionProvider: backtestExecutionProvider,
+  events: AAPLTickEvents,
+  startDate: new Date('2023-01-01'),
+  endDate: new Date('2023-12-31'),
+})
+
+backtestEventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick);
 
 
 app.listen(3000, () => {

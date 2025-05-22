@@ -28,7 +28,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
     cash: number;
   }> = [];
 
-  constructor(eventBus: EventBus, initialCash: number = 100000) {
+  constructor({ eventBus, initialCash }: { eventBus: EventBus, initialCash: number }) {
     super();
     this.eventBus = eventBus;
     this.cash = initialCash;
@@ -114,7 +114,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
   async closeAPosition(symbol: string): Promise<void> {
     console.log(`Closing position for ${symbol} in backtest`);
     const position = this.positions.get(symbol);
-    
+
     if (position && position.qty > 0) {
       // Create a sell order to close the position
       const closeOrder = new Order({
@@ -124,11 +124,11 @@ export class BacktestExecutionProvider extends ExecutionProvider {
         type: 'market',
         timeInForce: 'day'
       });
-      
+
       await this.placeOrder(closeOrder);
     }
   }
-  
+
   // Portfolio management methods
   async getOrder(orderId: string): Promise<Order | null> {
     return this.orders.get(orderId) || null;
@@ -231,7 +231,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
 
     console.log(`Backtest order filled: ${order.internalId} at price ${price}`);
   }
-  
+
   // Handle order filled events
   private handleOrderFilled(order: Order): void {
     if (order.status !== ORDER_STATUS.FILLED) return;
@@ -336,21 +336,21 @@ export class BacktestExecutionProvider extends ExecutionProvider {
   public getCash(): number {
     return this.cash;
   }
-  
+
   public setCash(amount: number): void {
     this.cash = amount;
     this.recordPortfolioState();
   }
-  
+
   // Implement abstract methods for order tracking
   public getPendingOrders(): Order[] {
     return [...this.pendingOrders];
   }
-  
+
   public getAllOrders(): Map<string, Order> {
     return new Map(this.orders);
   }
-  
+
   // Get portfolio history for analysis
   public getPortfolioHistory(): Array<{ timestamp: Date, equity: number, cash: number }> {
     return this.portfolioHistory;
@@ -387,7 +387,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
       positions: Array.from(this.positions.values()).length
     };
   }
-  
+
   // Get the latest tick data for a symbol
   private getLatestTickData(symbol: string): any {
     return this.latestTickData.get(symbol);
@@ -405,7 +405,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
   private async handlePositionCloseRequested(data: { symbol: string }): Promise<void> {
     await this.closeAPosition(data.symbol);
   }
-  
+
   private async handleOrderPlaced(order: Order): Promise<void> {
     // When an order is placed, try to process it immediately with the latest market data
     // This helps ensure orders are processed even between tick events
