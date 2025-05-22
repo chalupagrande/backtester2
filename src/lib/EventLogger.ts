@@ -17,7 +17,7 @@ export class EventLogger {
   private subscribeToAllEvents(): void {
     // Get all event types from the event bus
     const eventTypes = this.eventBus.getEventTypes();
-    
+
     // Subscribe to each event type
     for (const eventType of eventTypes) {
       const unsubscribe = this.eventBus.subscribe(
@@ -31,7 +31,7 @@ export class EventLogger {
   private logEvent<T>(data: T, event: Event<T>): void {
     // Store the event in memory
     this.logs.push(event);
-    
+
     // Optionally log to console
     if (this.logToConsole) {
       console.log(`[EVENT] ${event.type} at ${event.timestamp.toISOString()}:`, data);
@@ -56,7 +56,7 @@ export class EventLogger {
     } else {
       // Basic CSV implementation
       const headers = 'timestamp,type,data\n';
-      const rows = this.logs.map(event => 
+      const rows = this.logs.map(event =>
         `${event.timestamp.toISOString()},${event.type},${JSON.stringify(event.data)}`
       ).join('\n');
       return headers + rows;

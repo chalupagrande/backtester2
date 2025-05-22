@@ -29,7 +29,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
     this.endDate = options.endDate || new Date();
 
     // Initialize the event logger
-    this.eventLogger = new EventLogger(this.eventBus, { logToConsole: true });
+    this.eventLogger = new EventLogger(this.eventBus, { logToConsole: false });
 
     // Filter events by date range if provided
     if (options.startDate || options.endDate) {
@@ -56,7 +56,7 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
 
       // Emit the event to the event bus
       this.eventBus.emit(event.type, event.data);
-      
+
       // No need to explicitly call processOrders here as the BacktestExecutionProvider
       // is already subscribed to the relevant events and will process orders accordingly
     }

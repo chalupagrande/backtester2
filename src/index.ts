@@ -12,6 +12,7 @@ import path from 'path';
 import { DualSMAStrategy } from './strategies/DualSMAStrategy';
 import AppleStockData from './data/AAPL-2023-1D.json';
 import { Bar } from './lib/utils/types';
+import testing from "./test"
 
 const AAPLBars = AppleStockData.bars.AAPL
 const AAPLTickEvents = AAPLBars.map((bar: Bar) => {
@@ -42,6 +43,11 @@ const backtestRunner = new BacktestAlgorithmRunner({
 
 backtestEventBus.subscribe(EVENT_TYPES.TICK, strategy.handleTick);
 
+backtestRunner.start()
+  .then(() => {
+    console.log('Backtest completed');
+    // console.log('Results:', backtestRunner.getResults());
+  })
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
