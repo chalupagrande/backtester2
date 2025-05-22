@@ -21,6 +21,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
   private eventBus: EventBus;
   private cash: number;
   private initialCash: number;
+  private latestTickData: Map<string, any> = new Map(); // Store latest tick data by symbol
   private portfolioHistory: Array<{
     timestamp: Date;
     equity: number;
@@ -53,6 +54,7 @@ export class BacktestExecutionProvider extends ExecutionProvider {
     this.eventBus.subscribe(EVENT_TYPES.POSITION_CLOSE_REQUESTED, this.handlePositionCloseRequested);
     this.eventBus.subscribe(EVENT_TYPES.ORDER_FILLED, this.handleOrderFilled);
     this.eventBus.subscribe(EVENT_TYPES.TICK, this.handleTick);
+    this.eventBus.subscribe(EVENT_TYPES.ORDER_PLACED, this.handleOrderPlaced);
   }
 
   async placeOrder(order: Order): Promise<any> {
@@ -256,6 +258,9 @@ export class BacktestExecutionProvider extends ExecutionProvider {
     const symbol = tickData.symbol;
     const price = tickData.c; // Using close price
 
+    // Store the latest tick data for this symbol
+    this.latestTickData.set(symbol, tickData);
+
     // Update position market value if we have this symbol
     const position = this.positions.get(symbol);
     if (position) {
@@ -363,6 +368,11 @@ export class BacktestExecutionProvider extends ExecutionProvider {
       positions: Array.from(this.positions.values()).length
     };
   }
+  
+  // Get the latest tick data for a symbol
+  private getLatestTickData(symbol: string): any {
+    return this.latestTickData.get(symbol);
+  }
 
   // Event handlers for order-related events
   private async handleOrderRequested(orderData: Order): Promise<void> {
@@ -375,5 +385,14 @@ export class BacktestExecutionProvider extends ExecutionProvider {
 
   private async handlePositionCloseRequested(data: { symbol: string }): Promise<void> {
     await this.closeAPosition(data.symbol);
+  }
+  
+  private async handleOrderPlaced(order: Order): Promise<void> {
+    // When an order is placed, try to process it immediately with the latest market data
+    // This helps ensure orders are processed even between tick events
+    const latestTickData = this.getLatestTickData(order.symbol);
+    if (latestTickData) {
+      this.processPendingOrders(latestTickData);
+    }
   }
 }
