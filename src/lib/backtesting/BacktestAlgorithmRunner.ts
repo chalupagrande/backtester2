@@ -6,7 +6,6 @@ import { EventLogger } from '../EventLogger';
 import { EventBus } from '../EventBus';
 import { Strategy } from '../Strategy';
 import { ExecutionProvider } from '../ExecutionProvider';
-import { PortfolioProvider } from '../PortfolioProvider';
 
 export class BacktestAlgorithmRunner extends AlgorithmRunner {
   private events: Event<any>[] = [];
@@ -20,7 +19,6 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
     strategy: Strategy;
     eventBus: EventBus;
     executionProvider: ExecutionProvider;
-    portfolioProvider: PortfolioProvider;
     events: Event<any>[];
     startDate?: Date;
     endDate?: Date;
@@ -97,17 +95,17 @@ export class BacktestAlgorithmRunner extends AlgorithmRunner {
   }
 
   private calculateResults(): void {
-    // Get performance metrics from the portfolio provider
-    const provider = this.portfolioProvider as any;
+    // Get performance metrics from the execution provider
+    const provider = this.executionProvider as any;
     if (provider && typeof provider.getPerformanceMetrics === 'function') {
       this.results = provider.getPerformanceMetrics();
     } else {
-      // Fallback to basic metrics if the portfolio provider doesn't support performance metrics
+      // Fallback to basic metrics if the execution provider doesn't support performance metrics
       this.results = {
         totalReturn: 0,
         sharpeRatio: 0,
         maxDrawdown: 0,
-        message: "Portfolio provider doesn't support detailed performance metrics"
+        message: "Execution provider doesn't support detailed performance metrics"
       };
     }
 

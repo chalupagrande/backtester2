@@ -23,7 +23,7 @@ export class LiveAlgorithmRunner extends AlgorithmRunner {
 
   getResults(): any {
     // Return current portfolio stats
-    return this.portfolioProvider.getPositions();
+    return this.executionProvider.getPositions();
   }
 
   private connectTradeUpdates(): void {

@@ -1,28 +1,24 @@
 import { EventBus } from './EventBus';
 import { Strategy } from './Strategy';
-import { ExecutionProvider, PortfolioProvider } from './utils/types';
+import { ExecutionProvider } from './ExecutionProvider';
 
 export abstract class AlgorithmRunner {
   protected strategy: Strategy;
   protected eventBus: EventBus;
   protected executionProvider: ExecutionProvider;
-  protected portfolioProvider: PortfolioProvider;
 
   constructor({
     strategy,
     eventBus,
-    executionProvider,
-    portfolioProvider
+    executionProvider
   }: {
     strategy: Strategy;
     eventBus: EventBus;
     executionProvider: ExecutionProvider;
-    portfolioProvider: PortfolioProvider;
   }) {
     this.strategy = strategy;
     this.eventBus = eventBus;
     this.executionProvider = executionProvider;
-    this.portfolioProvider = portfolioProvider;
   }
 
   abstract start(): Promise<void>;
